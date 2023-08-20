@@ -4,31 +4,6 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn" style="position: relative">
-            <el-select
-              style="width: 95%"
-              @change="changeDepartment()"
-              v-model="department"
-              placeholder="部门筛选"
-              clearable
-            >
-              <el-option
-                v-for="(item, index) in departmentList"
-                :key="index"
-                :value="item.id"
-                :label="item.name"
-              ></el-option>
-            </el-select>
-            <el-tooltip class="item" effect="dark" content="保存部门筛选" placement="top">
-              <i
-                class="el-icon-upload hoverOrange"
-                @click="
-                  $setLocalStorage('department', department)
-                  $message.success('保存成功')
-                "
-              ></i>
-            </el-tooltip>
-          </div>
-          <div class="elCtn" style="position: relative">
             <el-cascader
               style="width: 95%"
               v-model="process"
@@ -68,8 +43,183 @@
       </div>
     </div>
     <div class="module">
-      <div class="listCtn">
-        日志添加区
+      <div class="listCtn log">
+        <div class="filterCtn">
+          <div class="elCtn">
+            <div class="filterLabel">订单号：</div>
+            <el-input v-model="ruleForm.order_code" placeholder="输入订单号搜索" style="width: 250px;"></el-input>
+            <div class="blueBtn" @click="openOrderCode">查找</div>
+          </div>
+          <div class="elCtn">
+            <div class="filterLabel">产品编号：</div>
+            <el-input v-model="ruleForm.product_code" placeholder="输入产品编号搜索" style="width: 250px;"></el-input>
+            <div class="blueBtn" @click="openProductCode">查找</div>
+          </div>
+          <div class="elCtn">
+            <div class="filterLabel">尺码颜色：</div>
+            <el-select
+              v-model="ruleForm.size_color_id"
+              @change="changeSizeColor"
+              placeholder="请选择尺码颜色"
+              style="width: 250px;"
+            >
+              <el-option
+                v-for="(item, index) in ruleForm.selectSizeColor"
+                :key="index + 'ruleForm.selectSizeColor'"
+                :label="item.name"
+                :value="item.size_color_id"
+              >
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <div class="filterLabel">生产工序：</div>
+            <el-cascader
+              v-model="ruleForm.process"
+              filterable
+              :options="processList"
+              :show-all-levels="false"
+              placeholder="请选择工序"
+              style="width: 250px;"
+              @change="getProcessDesc(ruleForm.process)"
+            ></el-cascader>
+            <div class="op0">查找</div>
+          </div>
+          <div class="elCtn" style="width: calc(91% - 416px);">
+            <div class="filterLabel">工序说明：</div>
+            <el-select
+              v-model="ruleForm.process_desc"
+              multiple
+              filterable
+              allow-create
+              default-first-option
+              collapse-tags
+              placeholder="请填写工序说明"
+              style="width: calc(100% - 100px);"
+            >
+              <el-option
+                v-for="(itemSon, indexSon) in processDesc"
+                :key="itemSon + indexSon"
+                :label="itemSon"
+                :value="itemSon"
+              >
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <div class="filterLabel">员工姓名：</div>
+            <el-select
+              v-model="ruleForm.staff_id"
+              placeholder="员工姓名或编号搜索"
+              style="width: 250px;"
+              @change="changeStaff"
+            >
+              <el-option v-for="item in staffList" :key="item.value" :label="item.label" :value="item.id"> </el-option>
+            </el-select>
+            <div class="op0">查找</div>
+          </div>
+          <div class="elCtn">
+            <div class="filterLabel">结算单价：</div>
+            <el-input
+              v-model="ruleForm.price"
+              type="number"
+              placeholder="请输入结算单价"
+              style="width: 250px;"
+            ></el-input>
+            <div class="op0">查找</div>
+          </div>
+          <div class="elCtn">
+            <div class="filterLabel">操作日期：</div>
+            <el-date-picker
+              v-model="ruleForm.date"
+              type="date"
+              placeholder="选择日期"
+              :clearable="false"
+              style="width: 250px!important;"
+            >
+            </el-date-picker>
+          </div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <div class="filterLabel">完成数量：</div>
+            <el-input
+              v-model="ruleForm.complete_num"
+              type="number"
+              placeholder="请输入完成数量"
+              @input="getComplete"
+              style="width: 250px;"
+            >
+              <template slot="append">件</template>
+            </el-input>
+            <div class="op0">查找</div>
+          </div>
+          <div class="elCtn">
+            <div class="filterLabel">额外数量：</div>
+            <el-input
+              v-model="ruleForm.extra_num"
+              type="number"
+              placeholder="额外数量、加头数量"
+              @input="getComplete"
+              style="width: 250px;"
+            >
+              <template slot="append">件</template>
+            </el-input>
+            <div class="op0">查找</div>
+          </div>
+          <div class="elCtn">
+            <div class="filterLabel">合计数量：</div>
+            <el-input v-model="ruleForm.number" type="number" placeholder="自动计算" disabled style="width: 250px;">
+            </el-input>
+          </div>
+        </div>
+        <div class="filterCtn">
+          <div class="elCtn">
+            <div class="filterLabel">B品数量：</div>
+            <el-input v-model="ruleForm.b_number" type="number" placeholder="请输入B品数量" style="width: 250px;">
+              <template slot="append">件</template>
+            </el-input>
+            <div class="op0">查找</div>
+          </div>
+          <div class="elCtn">
+            <div class="filterLabel">次品数量：</div>
+            <el-input
+              v-model="ruleForm.shoddy_number"
+              type="number"
+              placeholder="次品数量、加头数量"
+              style="width: 250px;"
+            >
+              <template slot="append">件</template>
+            </el-input>
+            <div class="op0">查找</div>
+          </div>
+          <div class="elCtn">
+            <div class="filterLabel">次品原因：</div>
+            <el-select
+              v-model="ruleForm.shoddy_reason"
+              multiple
+              filterable
+              allow-create
+              default-first-option
+              collapse-tags
+              placeholder="请选择次品原因"
+              style="width: 250px;"
+              @change="$forceUpdate"
+            >
+              <el-option
+                v-for="item in substandardReason"
+                :key="item.value + 'ciPinReason'"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </div>
+        </div>
       </div>
       <div class="listCtn clearfix">
         <div class="btn backHoverBlue fl" @click="confirmSubmit">确认{{ isEdit ? '修改' : '提交' }}</div>
@@ -86,11 +236,128 @@
       :data.sync="listKey"
       :originalData="originalSetting"
     ></zh-list-setting>
+    <el-dialog title="选择订单" width="40%" :visible.sync="showOrderCode" :before-close="closeOrderCode">
+      <div v-loading="loadingOrder">
+        <div style="display: flex;color: #333333;justify-content: space-between;">
+          <div style="font-weight: bolder;font-size: 16px">订单号</div>
+          <div style="font-weight: bolder;font-size: 16px">下单公司</div>
+          <div style="font-weight: bolder;font-size: 16px">下单时间</div>
+        </div>
+        <div
+          style="display: flex;color: #333333;justify-content: space-between;padding: 8px;"
+          v-for="(item, index) in orderList"
+          class="orderItem"
+          :key="index + 'orderList'"
+          @click="changeOrderCode(item)"
+        >
+          <div style="font-size: 16px">{{ item.value }}</div>
+          <div style="font-size: 16px">{{ item.client_name }}</div>
+          <div style="font-size: 16px">{{ item.created_at }}</div>
+        </div>
+        <div class="listCtn" style="padding: 0">
+          <div class="pageCtn">
+            <el-pagination
+              background
+              :page-size="10"
+              layout="prev, pager, next, jumper"
+              :total="orderTotal"
+              :current-page.sync="orderPage"
+              @current-change="getOrderList"
+            >
+            </el-pagination>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+    <div class="popup" v-show="addOrder" v-loading="showPopupLoading" element-loading-target>
+      <div class="main">
+        <div class="titleCtn">
+          <span class="text">选择产品</span>
+          <div class="closeCtn">
+            <span class="el-icon-close" @click="closeAddOrder()"></span>
+          </div>
+        </div>
+        <div class="contentCtn" style="padding-top: 15px; max-height: 700px">
+          <div class="editCtn packOrder">
+            <div class="tableCtn">
+              <div class="tbody hasTop">
+                <div class="trow">
+                  <div class="tcol bgGray">订单类型</div>
+                  <div class="tcol bgGray">订单号</div>
+                  <div class="tcol bgGray">产品编号</div>
+                  <div class="tcol bgGray">产品名称</div>
+                  <div class="tcol bgGray">产品描述</div>
+                  <div class="tcol bgGray">产品图片</div>
+                  <div class="tcol bgGray">尺码/颜色</div>
+                  <div class="tcol bgGray">尺寸/克重</div>
+                  <div class="tcol bgGray">计划生产数量</div>
+                  <div class="tcol bgGray">检验入库数量</div>
+                </div>
+                <div class="trow" v-for="(item, index) in productList" :key="index + 'productionScheduleUpdate'">
+                  <div class="tcol">{{ item.order_type == 1 ? '订单' : '样单' }}</div>
+                  <div class="tcol">{{ item.code }}</div>
+                  <div class="tcol noPad" style="flex: 9.8">
+                    <div class="trow" v-for="(itemPro, indexPro) in item.product_info" :key="indexPro + 'pro'">
+                      <div class="tcol">{{ itemPro.product_code }}<br />{{ itemPro.category }}</div>
+                      <div class="tcol">{{ itemPro.name }}</div>
+                      <div class="tcol">{{ contentHtml(itemPro.desc) }}</div>
+                      <div class="tcol">
+                        <el-image
+                          :src="
+                            itemPro.image_data.length > 0
+                              ? itemPro.image_data[0]
+                              : require('@/assets/image/common/noPic.png')
+                          "
+                          :preview-src-list="itemPro.image_data"
+                          fit="cover"
+                          style="width: 45px; height: 45px; padding: 10px 0"
+                        ></el-image>
+                      </div>
+                      <div class="tcol noPad" style="flex: 4.85;cursor: pointer;">
+                        <div
+                          class="trow colorItem"
+                          v-for="(itemSizeColor, indexSizeColor) in itemPro.colorSizeInfo"
+                          @click="chooseColorSize(item, itemPro, itemSizeColor)"
+                          :key="itemSizeColor.size_id + 'color' + indexSizeColor"
+                        >
+                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">
+                            {{ (itemSizeColor.size_name || '无数据') + '/' + (itemSizeColor.color_name || '无数据') }}
+                          </div>
+                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">
+                            {{ (itemSizeColor.size_info || '无数据') + '/' + (itemSizeColor.weight || 0) }}
+                          </div>
+                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">
+                            {{ itemSizeColor.number }}
+                          </div>
+                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">
+                            {{ itemSizeColor.inspection_number }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom: 5px; margin-top: 5px; display: flex; justify-content: flex-end; padding-right: 25px">
+          <el-pagination
+            background
+            layout="prev, pager, next, jumper"
+            :total="productTotal"
+            :current-page.sync="productPage"
+            @current-change="openProductCode"
+          >
+          </el-pagination>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { process, listSetting, staff, exportExcel, workshop, check } from '@/assets/js/api'
+import { process, listSetting, staff, exportExcel, workshop, check, order } from '@/assets/js/api'
 import { number } from 'echarts'
 export default {
   name: 'newModule',
@@ -101,7 +368,15 @@ export default {
     return {
       loading: false,
       showSetting: false,
+      showOrderCode: false,
+      addOrder: false,
+      showPopupLoading: false,
+      loadingOrder: false,
       page: 1,
+      orderPage: 1,
+      productPage: 1,
+      orderTotal: 0,
+      productTotal: 0,
       originalSetting: [
         {
           key: 'id',
@@ -181,21 +456,21 @@ export default {
           index: 10
         },
         {
-          key: 'number',
+          key: 'complete_num',
           name: '完成数量（件）',
           ifShow: true,
           ifLock: false,
           index: 11
         },
         {
-          key: 'extra_number',
+          key: 'extra_num',
           name: '额外数量（件）',
           ifShow: true,
           ifLock: false,
           index: 12
         },
         {
-          key: 'total_number',
+          key: 'number',
           name: '合计数量（件）',
           ifShow: true,
           ifLock: false,
@@ -230,57 +505,56 @@ export default {
           index: 17
         },
         {
-          key: 'group_name',
-          name: '负责小组',
+          key: 'date',
+          name: '操作日期',
           ifShow: true,
           ifLock: false,
           index: 18
-        },
-        {
-          key: 'complete_time',
-          name: '创建时间',
-          ifShow: true,
-          ifLock: false,
-          index: 19
-        },
-        {
-          key: 'update_time',
-          name: '更新时间',
-          ifShow: true,
-          ifLock: false,
-          index: 20
-        },
-        {
-          key: 'user_name',
-          name: '创建人',
-          ifShow: true,
-          ifLock: false,
-          index: 21
         }
       ],
-      list: [
-        { id: 1 },
-        { id: 2 },
-        { id: 3 },
-        { id: 4 },
-        { id: 5 },
-        { id: 6 },
-        { id: 7 },
-        { id: 8 },
-        { id: 9 },
-        { id: 10 },
-        { id: 11 },
-        { id: 12 },
-        { id: 13 },
-        { id: 14 },
-        { id: 15 },
-        { id: 16 },
-        { id: 17 },
-        { id: 18 },
-        { id: 19 },
-        { id: 20 },
-        { id: 21 }
+      substandardReason: [
+        {
+          value: '织造原因',
+          label: '织造原因'
+        },
+        {
+          value: '捻须原因',
+          label: '捻须原因'
+        },
+        {
+          value: '拉毛原因',
+          label: '拉毛原因'
+        },
+        {
+          value: '刺毛原因',
+          label: '刺毛原因'
+        },
+        {
+          value: '水洗原因',
+          label: '水洗原因'
+        },
+        {
+          value: '车缝原因',
+          label: '车缝原因'
+        },
+        {
+          value: '套口原因',
+          label: '套口原因'
+        },
+        {
+          value: '整烫原因',
+          label: '整烫原因'
+        },
+        {
+          value: '手工原因',
+          label: '手工原因'
+        },
+        {
+          value: '其它原因',
+          label: '其它原因'
+        }
       ],
+      list: [],
       showList: [],
       listKey: [],
       listSettingId: null,
@@ -307,7 +581,47 @@ export default {
       departmentList: [],
       process: '',
       processList: [],
+      staffList: [],
+      orderList: [],
+      productList: [],
+      processDesc: [],
       editForm: {},
+      originalForm: {
+        order_code: '',
+        product_code: '',
+        size_name: '',
+        color_name: '',
+        size_color: '',
+        process: '',
+        process_desc: '',
+        staff_id: '',
+        price: '',
+        date: this.$moment(new Date()).format('YYYY-MM-DD'),
+        complete_num: '',
+        extra_num: '',
+        number: '',
+        b_number: '',
+        shoddy_number: '',
+        shoddy_reason: ''
+      },
+      ruleForm: {
+        order_code: '',
+        product_code: '',
+        size_name: '',
+        color_name: '',
+        size_color: '',
+        process: '',
+        process_desc: '',
+        staff_id: '',
+        price: '',
+        date: this.$moment(new Date()).format('YYYY-MM-DD'),
+        complete_num: '',
+        extra_num: '',
+        number: '',
+        b_number: '',
+        shoddy_number: '',
+        shoddy_reason: ''
+      },
       isEdit: false
     }
   },
@@ -324,20 +638,6 @@ export default {
           this.loading = false
         })
     },
-    changeDepartment() {
-      if (this.department === '') {
-        this.$setLocalStorage('department', '')
-        this.departmentName = ''
-        return
-      }
-      staff
-        .departmentDetail({
-          id: this.department
-        })
-        .then(res => {
-          this.departmentName = res.data.data.name
-        })
-    },
     lostDelete(id: string | number) {
       let index = this.list.findIndex((item: { id: string | number }) => item.id === id)
       this.$deleteItem(this.list, index)
@@ -352,6 +652,158 @@ export default {
             this.$message.success('删除成功')
           }
         })
+    },
+    openOrderCode() {
+      this.showOrderCode = true
+      this.getOrderList()
+    },
+    openProductCode() {
+      this.addOrder = true
+      this.showPopupLoading = true
+      if (!this.ruleForm.order_id || this.ruleForm.order_code === '') {
+        order
+          .simpleList({
+            order_code: this.ruleForm.order_code,
+            product_code: this.ruleForm.product_code,
+            order_type: '',
+            client_id: '',
+            page: this.productPage,
+            limit: 10
+          })
+          .then(res => {
+            res.data.data.items.forEach((item: any) => {
+              item.product_info = item.product_data.map((itemColor: any) => {
+                itemColor.colorSizeInfo = this.$clone(itemColor.product_info)
+                return itemColor
+              })
+            })
+            this.productTotal = res.data.data.total
+            this.productList = res.data.data.items
+            this.showPopupLoading = false
+          })
+      } else {
+        order.detail({ id: this.ruleForm.order_id }).then(res => {
+          let data = res.data.data
+          this.productList = [
+            {
+              id: data.id,
+              group_id: data.group_id,
+              order_type: data.order_type,
+              code: data.code,
+              system_code: data.system_code,
+              client_name: data.client_name,
+              product_info: []
+            }
+          ]
+          data.time_data[0].batch_data[0].product_data.forEach((item: any) => {
+            this.productList[0].product_info.push({
+              product_code: item.product_code,
+              desc: item.desc,
+              product_id: item.product_id,
+              name: item.name,
+              image_data: item.image_data,
+              category: item.category + (item.secondary_category ? '/' + item.secondary_category : ''),
+              colorSizeInfo: item.product_info
+            })
+          })
+          this.showPopupLoading = false
+        })
+      }
+    },
+    closeOrderCode() {
+      this.showOrderCode = false
+      this.orderList = []
+    },
+    getOrderList() {
+      this.loadingOrder = true
+      this.$forceUpdate()
+      order
+        .simpleList({
+          order_code: this.ruleForm.order_code,
+          order_type: '',
+          client_id: '',
+          page: this.orderPage,
+          limit: 10
+        })
+        .then(res => {
+          if (res.data.status) {
+            let arr: any = []
+            res.data.data.items.forEach((item: any) => {
+              arr.push({ value: item.code, id: item.id, created_at: item.created_at, client_name: item.client_name })
+            })
+            this.orderList = arr
+            this.orderTotal = res.data.data.total
+          } else {
+            this.orderList = []
+          }
+          this.loadingOrder = false
+        })
+    },
+    changeOrderCode(item: any) {
+      this.ruleForm.order_code = item.value
+      this.ruleForm.product_code = ''
+      this.ruleForm.order_id = item.id
+      this.ruleForm.client_name = item.client_name
+      this.closeOrderCode()
+      this.openProductCode()
+    },
+    closeAddOrder() {
+      this.addOrder = false
+      this.productList = []
+    },
+    contentHtml(content: string) {
+      if (content === null) return ''
+      // 富文本编辑器的内容如何只获得文字去掉标签
+      // content = content.replace(/<[^>]+>/g, '')
+      // 在上面的基础上还去掉了换行<br/>
+      content = content.replace(/<[^>]+>/g, '').replace(/(\n)/g, '')
+      return content
+    },
+    chooseColorSize(item: any, itemPro: any, itemSizeColor: any) {
+      this.ruleForm.selectSizeColor = itemPro.colorSizeInfo.map((itemSon: any) => {
+        itemSon.name = itemSon.size_name + '/' + itemSon.color_name
+        itemSon.size_color_id = itemSon.size_id + ',' + itemSon.color_id
+        return itemSon
+      })
+      this.ruleForm.client_name = item.client_name
+      this.ruleForm.size_name = itemSizeColor.size_name
+      this.ruleForm.color_name = itemSizeColor.color_name
+      this.ruleForm.size_color_id = itemSizeColor.size_id + ',' + itemSizeColor.color_id
+      this.ruleForm.product_code = itemPro.product_code
+      this.ruleForm.product_info = this.$clone(itemPro)
+      if (!this.ruleForm.order_id || this.ruleForm.order_code === '') {
+        this.ruleForm.order_id = item.id
+        this.ruleForm.order_code = item.code
+      }
+      this.closeAddOrder()
+    },
+    getProcessDesc(processName: any) {
+      process
+        .list({
+          name: processName[1]
+        })
+        .then((res: any) => {
+          this.processDesc = res.data.data[0].process_desc ? res.data.data[0].process_desc.split(',') : []
+        })
+      this.$forceUpdate()
+    },
+    getComplete() {
+      this.ruleForm.number = (Number(this.ruleForm.complete_num) + Number(this.ruleForm.extra_num)).toFixed(2)
+    },
+    changeStaff(e: number) {
+      let obj = this.staffList.find((item: any) => {
+        return item.id === e
+      })
+      this.ruleForm.staff_name = obj.name
+      this.ruleForm.staff_code = obj.code
+    },
+    changeSizeColor(e: any) {
+      let obj = this.ruleForm.selectSizeColor.find((item: any) => {
+        return item.size_color_id === e
+      })
+      this.ruleForm.size_name = obj.size_name
+      this.ruleForm.color_name = obj.color_name
+
     },
     lostEdit(item: any) {
       this.editForm = this.$clone(item)
@@ -376,6 +828,36 @@ export default {
       }
     },
     confirmSubmit() {
+      if(!this.ruleForm.order_code) {
+        this.$message.error('请填写订单号')
+        return
+      }
+      if(!this.ruleForm.product_code) {
+        this.$message.error('请填写产品单号')
+        return
+      }
+      if(!this.ruleForm.size_color_id) {
+        this.$message.error('请选择尺码颜色')
+        return
+      }
+      if(!this.ruleForm.process || this.ruleForm.process.length === 0) {
+        this.$message.error('请填写选择生产工序')
+        return
+      }
+      if(!this.ruleForm.complete_num) {
+        this.$message.error('请填写完成数量')
+        return
+      }
+      if(!this.ruleForm.order_code) {
+        this.$message.error('请填写订单号')
+        return
+      }
+
+      this.ruleForm.b_number = this.ruleForm.b_number || 0
+      this.ruleForm.extra_num = this.ruleForm.extra_num || 0
+      this.ruleForm.number = this.ruleForm.number || 0
+      this.ruleForm.shoddy_number = this.ruleForm.shoddy_number || 0
+      this.ruleForm.price = this.ruleForm.price || 0
       if (this.isEdit) {
         let index = this.list.findIndex((item: { id: number }) => item.id === this.editForm.id)
         this.list[index] = this.$clone(this.editForm)
@@ -383,9 +865,20 @@ export default {
         this.editForm = {}
         this.$message.success('修改成功')
       } else {
-        this.list.push({ id: this.list.length + 1 })
+        this.ruleForm.process_name = this.ruleForm.process[1]
+        this.ruleForm.process_desc = this.ruleForm.process_desc.toString()
+        this.ruleForm.shoddy_reason = this.ruleForm.shoddy_reason.toString()
+        this.ruleForm.date = this.$moment(this.ruleForm.date).format('YYYY-MM-DD')
+        this.ruleForm.total_price = this.ruleForm.price * this.ruleForm.number
+        this.list.push(this.$clone(this.ruleForm))
         this.$message.success('提交成功')
       }
+      this.ruleForm.b_number = ''
+      this.ruleForm.number = ''
+      this.ruleForm.extra_num = ''
+      this.ruleForm.shoddy_number = ''
+      this.ruleForm.complete_num = ''
+      this.ruleForm.shoddy_reason = []
       this.getShowList()
     }
   },
@@ -403,6 +896,17 @@ export default {
             return res.id == this.department
           })
           this.departmentName = this.departmentName?.name || ''
+          staff
+            .list({
+              status: 1,
+              department: this.departmentName
+            })
+            .then(ress => {
+              this.staffList = ress.data.data.map((item: any) => {
+                item.label = item.code.slice(item.code.length - 4) + '-' + item.name
+                return item
+              })
+            })
         }
       })
 
@@ -438,10 +942,13 @@ export default {
 
     this.department = Number(this.$getLocalStorage('department')) || ''
     let processName = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+    this.getProcessDesc(processName)
 
     // @ts-ignore
     processName = processName.length > 0 ? [Number(processName[0]), processName[1]] : processName
     this.process = processName
+    this.originalForm.process = this.process
+    this.ruleForm.process = this.process
 
     this.getListSetting()
   }
@@ -450,4 +957,47 @@ export default {
 
 <style lang="less" scoped>
 @import '~@/assets/css/workshopManagement/newModule.less';
+.log {
+  .filterCtn {
+    display: flex;
+    width: 100%;
+    .elCtn {
+      display: flex;
+      align-items: center;
+      width: 400px;
+    }
+  }
+
+  .op0 {
+    opacity: 0;
+  }
+
+  .blueBtn {
+    cursor: pointer;
+    background: #51adfd;
+    color: white;
+    padding: 5px 8px;
+    border-radius: 4px;
+  }
+
+  .filterLabel {
+    width: 100px;
+    display: inline-block;
+  }
+}
+
+.orderItem {
+  cursor: pointer !important;
+  &:hover {
+    background-color: #51adfd;
+    color: white !important;
+  }
+}
+
+.colorItem {
+  &:hover {
+    background: #51adfd;
+    color: white;
+  }
+}
 </style>

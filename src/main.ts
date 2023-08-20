@@ -3,13 +3,15 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import plugin from './assets/js/plugin'
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import mycomponent from './components'
+import moment from 'moment'
 Vue.config.productionTip = false
 Vue.use(mycomponent)
 Vue.use(ElementUI)
 Vue.use(plugin)
+Vue.prototype.$moment = moment
 
 // 审核公共图
 Vue.filter('checkFilter', (val: 0 | 1 | 2 | null) => {
@@ -47,11 +49,10 @@ Vue.filter('productStatusClassFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
   return statusArr[val]
 })
 
-
 import { stockType } from '@/assets/js/dictionary'
 // 出入库状态转换
 Vue.filter('materialStockTypeFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
-  return stockType.find((item) => item.value === val)?.name
+  return stockType.find(item => item.value === val)?.name
 })
 
 // 出入库状态转换 class
@@ -66,7 +67,7 @@ Vue.filter('materialStockTypeClassFilter', (val: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 // 产品出入库状态转换
 import { productStockType } from '@/assets/js/dictionary'
 Vue.filter('productStockTypeFilter', (val: 1 | 2 | 3 | 4 | 5 | 6) => {
-  return productStockType.find((item) => item.value === val)?.name
+  return productStockType.find(item => item.value === val)?.name
 })
 
 // 产品出入库状态转换 class
@@ -127,14 +128,20 @@ declare module 'vue/types/vue' {
     $diffDate(date: DateConstructor): string
     $diffByDate(date: DateConstructor): string | number
     $getDate(date?: Date, connector?: string): string
-    $downloadExcel(data: any[], mapTitle: Array<{ title: string, key: string }>, excelName: string): void
+    $downloadExcel(data: any[], mapTitle: Array<{ title: string; key: string }>, excelName: string): void
     $addItem<T>(father: T[], son: T): void
     $deleteItem(father: any[], index: number | string): void
     $checkCommonInfo(info: CheckCommonInfo[]): void
     $flatten(data: any[]): any[]
     $formCheck(
       data: any,
-      checkArr: Array<{ key: string, errMsg?: string, regExp?: RegExp, regNormal?: 'isNum' | 'isEmail' | 'isPhone' | 'isNull' | 'checkArr', regNegate?: boolean }>
+      checkArr: Array<{
+        key: string
+        errMsg?: string
+        regExp?: RegExp
+        regNormal?: 'isNum' | 'isEmail' | 'isPhone' | 'isNull' | 'checkArr'
+        regNegate?: boolean
+      }>
     ): boolean
     $ifRepeatArray(arr: string[]): boolean
     $findId<T, K extends keyof T>(jsonArr: T[], id: number | string, returnKey: K, findKey: K): T[K]
@@ -152,6 +159,7 @@ declare module 'vue/types/vue' {
     $focusByKeydown(ev: any, key: string, indexArr: number[], father: any, keyArr: any[]): void
     $toFixed(num: number, precision?: number, changeToPrice?: boolean): number
     $permissionsFlag(type: string, errMsg?: string): boolean
+    $moment(date:any): any
   }
 }
 new Vue({
@@ -159,6 +167,3 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
-
-
-
