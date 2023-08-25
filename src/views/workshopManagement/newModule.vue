@@ -42,7 +42,7 @@
         </div>
       </div>
     </div>
-    <div class="module">
+    <div class="module" v-loading="loadingModule">
       <div class="listCtn log">
         <div class="filterCtn">
           <div class="elCtn">
@@ -357,7 +357,7 @@
 </template>
 
 <script lang="ts">
-import { process, listSetting, staff, exportExcel, workshop, check, order } from '@/assets/js/api'
+import { process, listSetting, staff, exportExcel, workshop, check, order, checkPriceBeyond } from '@/assets/js/api'
 import { number } from 'echarts'
 export default {
   name: 'newModule',
@@ -367,6 +367,7 @@ export default {
   } {
     return {
       loading: false,
+      loadingModule: false,
       showSetting: false,
       showOrderCode: false,
       addOrder: false,
@@ -741,9 +742,6 @@ export default {
     },
     changeOrderCode(item: any) {
       this.ruleForm.order_code = item.value
-      this.ruleForm.product_code = ''
-      this.ruleForm.order_id = item.id
-      this.ruleForm.client_name = item.client_name
       this.closeOrderCode()
       this.openProductCode()
     },
@@ -765,16 +763,18 @@ export default {
         itemSon.size_color_id = itemSon.size_id + ',' + itemSon.color_id
         return itemSon
       })
+      this.ruleForm.group_id = item.group_id
+      this.ruleForm.product_id = itemPro.product_id
       this.ruleForm.client_name = item.client_name
       this.ruleForm.size_name = itemSizeColor.size_name
       this.ruleForm.color_name = itemSizeColor.color_name
+      this.ruleForm.size_id = itemSizeColor.size_id
+      this.ruleForm.color_id = itemSizeColor.color_id
       this.ruleForm.size_color_id = itemSizeColor.size_id + ',' + itemSizeColor.color_id
       this.ruleForm.product_code = itemPro.product_code
       this.ruleForm.product_info = this.$clone(itemPro)
-      if (!this.ruleForm.order_id || this.ruleForm.order_code === '') {
-        this.ruleForm.order_id = item.id
-        this.ruleForm.order_code = item.code
-      }
+      this.ruleForm.order_id = item.id
+      this.ruleForm.order_code = item.code
       this.closeAddOrder()
     },
     getProcessDesc(processName: any) {
@@ -803,10 +803,14 @@ export default {
       })
       this.ruleForm.size_name = obj.size_name
       this.ruleForm.color_name = obj.color_name
-
+      this.ruleForm.size_id = obj.size_id
+      this.ruleForm.color_id = obj.color_id
     },
     lostEdit(item: any) {
-      this.editForm = this.$clone(item)
+      this.ruleForm = this.$clone(item)
+      this.ruleForm.process_desc = this.ruleForm.process_desc ? this.ruleForm.process_desc.split(',') : []
+      this.ruleForm.shoddy_reason = this.ruleForm.shoddy_reason ? this.ruleForm.shoddy_reason.split(',') : []
+      this.$forceUpdate()
       this.isEdit = true
     },
     clearAll() {
@@ -828,58 +832,188 @@ export default {
       }
     },
     confirmSubmit() {
-      if(!this.ruleForm.order_code) {
+      if (!this.ruleForm.order_code) {
         this.$message.error('请填写订单号')
         return
       }
-      if(!this.ruleForm.product_code) {
-        this.$message.error('请填写产品单号')
+      if (!this.ruleForm.product_code) {
+        this.$message.error('请填写产品遍号')
         return
       }
-      if(!this.ruleForm.size_color_id) {
+      if (!this.ruleForm.size_color_id) {
         this.$message.error('请选择尺码颜色')
         return
       }
-      if(!this.ruleForm.process || this.ruleForm.process.length === 0) {
+      if (!this.ruleForm.process || this.ruleForm.process.length === 0) {
         this.$message.error('请填写选择生产工序')
         return
       }
-      if(!this.ruleForm.complete_num) {
+      if (!this.ruleForm.complete_num) {
         this.$message.error('请填写完成数量')
         return
       }
-      if(!this.ruleForm.order_code) {
+      if (!this.ruleForm.order_code) {
         this.$message.error('请填写订单号')
         return
       }
 
-      this.ruleForm.b_number = this.ruleForm.b_number || 0
-      this.ruleForm.extra_num = this.ruleForm.extra_num || 0
-      this.ruleForm.number = this.ruleForm.number || 0
-      this.ruleForm.shoddy_number = this.ruleForm.shoddy_number || 0
-      this.ruleForm.price = this.ruleForm.price || 0
-      if (this.isEdit) {
-        let index = this.list.findIndex((item: { id: number }) => item.id === this.editForm.id)
-        this.list[index] = this.$clone(this.editForm)
-        this.isEdit = false
-        this.editForm = {}
-        this.$message.success('修改成功')
-      } else {
-        this.ruleForm.process_name = this.ruleForm.process[1]
-        this.ruleForm.process_desc = this.ruleForm.process_desc.toString()
-        this.ruleForm.shoddy_reason = this.ruleForm.shoddy_reason.toString()
-        this.ruleForm.date = this.$moment(this.ruleForm.date).format('YYYY-MM-DD')
-        this.ruleForm.total_price = this.ruleForm.price * this.ruleForm.number
-        this.list.push(this.$clone(this.ruleForm))
-        this.$message.success('提交成功')
+      this.loadingModule = true
+      const checkArr: any[] = [
+        {
+          process_name: this.ruleForm.process[1],
+          product_id: this.ruleForm.product_id,
+          size_id: this.ruleForm.size_id,
+          color_id: this.ruleForm.color_id,
+          price: this.ruleForm.price
+        }
+      ]
+
+      let params: {
+        type?: number
+        data: Array<{
+          id: number | string | null
+          staff_id: number | string
+          order_id: number | string
+          group_id: number | string
+          process_name: number | string
+          process_type: number | string
+          process_desc: string
+          extra_number: number | string
+          product_id: number | string
+          size_id: number | string
+          color_id: number | string
+          number: number | string
+          price: number | string
+          total_price: number | string
+          shoddy_number: number | string
+          shoddy_reason: string
+          complete_time: string
+        }>
+      } = {
+        data: [
+          {
+            id: this.ruleForm.id || null,
+            staff_id: this.ruleForm.staff_id,
+            order_id: this.ruleForm.order_id,
+            group_id: this.ruleForm.group_id,
+            process_name: this.ruleForm.process[1],
+            process_type: this.ruleForm.process[0],
+            process_desc: this.ruleForm.process_desc.toString(),
+            extra_number: this.ruleForm.extra_num || 0,
+            product_id: this.ruleForm.product_id,
+            size_id: this.ruleForm.size_id,
+            color_id: this.ruleForm.color_id,
+            number: this.ruleForm.complete_num,
+            price: this.ruleForm.price || 0,
+            total_price: (this.ruleForm.price || 0) * (this.ruleForm.number || 0),
+            shoddy_number: this.ruleForm.shoddy_number || 0,
+            shoddy_reason: this.ruleForm.shoddy_reason.toString(),
+            complete_time: this.ruleForm.date
+          }
+        ]
       }
-      this.ruleForm.b_number = ''
-      this.ruleForm.number = ''
-      this.ruleForm.extra_num = ''
-      this.ruleForm.shoddy_number = ''
-      this.ruleForm.complete_num = ''
-      this.ruleForm.shoddy_reason = []
-      this.getShowList()
+
+      // 查询单据单价是否超过报价
+      checkPriceBeyond({
+        doc_type: 14,
+        data: checkArr
+      }).then(res => {
+        if (this.isEdit) {
+          params.type = 1
+        }
+        if (res.data.data.length === 0) {
+          workshop.save(params).then(res => {
+            if (res.data.status) {
+              if (this.isEdit) {
+                let index = this.list.findIndex((item: { id: number }) => item.id === this.ruleForm.id)
+                let obj = this.$clone(this.ruleForm)
+                obj.process_name = obj.process[1]
+                obj.process_desc = obj.process_desc.toString()
+                obj.shoddy_reason = obj.shoddy_reason.toString()
+                obj.date = this.$moment(obj.date).format('YYYY-MM-DD')
+                obj.total_price = obj.price * obj.number
+                this.list[index] = this.$clone(obj)
+                this.isEdit = false
+                this.$message.success('修改成功')
+              } else {
+                let obj = this.$clone(this.ruleForm)
+                obj.process_name = obj.process[1]
+                obj.process_desc = obj.process_desc.toString()
+                obj.shoddy_reason = obj.shoddy_reason.toString()
+                obj.date = this.$moment(obj.date).format('YYYY-MM-DD')
+                obj.total_price = obj.price * obj.number
+                this.list.push(obj)
+                this.$message.success('提交成功')
+              }
+              this.ruleForm.b_number = ''
+              this.ruleForm.number = ''
+              this.ruleForm.extra_num = ''
+              this.ruleForm.shoddy_number = ''
+              this.ruleForm.complete_num = ''
+              this.ruleForm.shoddy_reason = []
+              this.getShowList()
+            }
+          })
+          this.loadingModule = false
+        } else {
+          const createHtml = this.$createElement
+          this.$msgbox({
+            message: createHtml(
+              'p',
+              undefined,
+              res.data.data.map((item: string) => {
+                return createHtml('p', undefined, item)
+              })
+            ),
+            title: '提示',
+            showCancelButton: true,
+            confirmButtonText: '继续提交',
+            cancelButtonText: '取消提交',
+            type: 'warning'
+          })
+            .then(() => {
+              workshop.save(params).then(res => {
+                if (res.data.status) {
+                  if (this.isEdit) {
+                    let index = this.list.findIndex((item: { id: number }) => item.id === this.ruleForm.id)
+                    let obj = this.$clone(this.ruleForm)
+                    obj.process_name = obj.process[1]
+                    obj.process_desc = obj.process_desc.toString()
+                    obj.shoddy_reason = obj.shoddy_reason.toString()
+                    obj.date = this.$moment(obj.date).format('YYYY-MM-DD')
+                    obj.total_price = obj.price * obj.number
+                    this.list[index] = this.$clone(obj)
+                    this.isEdit = false
+                    this.$message.success('修改成功')
+                  } else {
+                    let obj = this.$clone(this.ruleForm)
+                    obj.process_name = obj.process[1]
+                    obj.process_desc = obj.process_desc.toString()
+                    obj.shoddy_reason = obj.shoddy_reason.toString()
+                    obj.date = this.$moment(obj.date).format('YYYY-MM-DD')
+                    obj.total_price = obj.price * obj.number
+                    this.list.push(obj)
+                    this.$message.success('提交成功')
+                  }
+                  this.ruleForm.b_number = ''
+                  this.ruleForm.number = ''
+                  this.ruleForm.extra_num = ''
+                  this.ruleForm.shoddy_number = ''
+                  this.ruleForm.complete_num = ''
+                  this.ruleForm.shoddy_reason = []
+                  this.getShowList()
+                }
+              })
+              this.loadingModule = false
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消提交'
+              })
+            })
+        }
+      })
     }
   },
   created() {
