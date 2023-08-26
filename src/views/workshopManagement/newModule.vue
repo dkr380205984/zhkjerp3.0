@@ -23,7 +23,7 @@
               ></i>
             </el-tooltip>
           </div>
-          <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(3)">其它功能</div>
+          <!-- <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(3)">其它功能</div> -->
           <div class="btn backHoverOrange fl" style="margin-left: 20px" @click="showSetting = true">列表设置</div>
         </div>
       </div>
@@ -226,6 +226,13 @@
         <div class="btn backHoverOrange fl" style="margin-left: 20px" @click="clearAll">全部清空</div>
       </div>
     </div>
+    <div class="bottomFixBar">
+      <div class="main">
+        <div class="btnCtn">
+          <div class="borderBtn" @click="$router.go(-1)">返回</div>
+        </div>
+      </div>
+    </div>
     <!-- 列表设置 -->
     <zh-list-setting
       @close="showSetting = false"
@@ -357,13 +364,14 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 import { process, listSetting, staff, exportExcel, workshop, check, order, checkPriceBeyond } from '@/assets/js/api'
 import { number } from 'echarts'
-export default {
+export default Vue.extend({
   name: 'newModule',
   data(): {
     departmentList: { id: string | number; name: string }[]
-    [porpName: string]: any
+    [propName: string]: any
   } {
     return {
       loading: false,
@@ -883,6 +891,7 @@ export default {
           size_id: number | string
           color_id: number | string
           number: number | string
+          number_B: number | string
           price: number | string
           total_price: number | string
           shoddy_number: number | string
@@ -904,6 +913,7 @@ export default {
             size_id: this.ruleForm.size_id,
             color_id: this.ruleForm.color_id,
             number: this.ruleForm.complete_num,
+            number_B: this.ruleForm.b_number,
             price: this.ruleForm.price || 0,
             total_price: (this.ruleForm.price || 0) * (this.ruleForm.number || 0),
             shoddy_number: this.ruleForm.shoddy_number || 0,
@@ -937,6 +947,7 @@ export default {
                 this.$message.success('修改成功')
               } else {
                 let obj = this.$clone(this.ruleForm)
+                obj.id = res.data.data[0]
                 obj.process_name = obj.process[1]
                 obj.process_desc = obj.process_desc.toString()
                 obj.shoddy_reason = obj.shoddy_reason.toString()
@@ -987,6 +998,7 @@ export default {
                     this.$message.success('修改成功')
                   } else {
                     let obj = this.$clone(this.ruleForm)
+                    obj.id = res.data[0]
                     obj.process_name = obj.process[1]
                     obj.process_desc = obj.process_desc.toString()
                     obj.shoddy_reason = obj.shoddy_reason.toString()
@@ -1086,7 +1098,7 @@ export default {
 
     this.getListSetting()
   }
-}
+})
 </script>
 
 <style lang="less" scoped>

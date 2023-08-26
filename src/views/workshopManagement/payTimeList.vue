@@ -126,7 +126,7 @@
           >
             列表设置
           </div>
-          <!-- <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(3)">计件更新（新模式）</div> -->
+          <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(3)">计件更新（新模式）</div>
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(1)">计件更新（按订单）</div>
           <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(2)">计件更新（按员工）</div>
           <div
@@ -313,7 +313,7 @@ import { limitArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   data(): {
     list: OrderInfo[]
-    [porpName: string]: any
+    [propName: string]: any
   } {
     return {
       loading: true,
