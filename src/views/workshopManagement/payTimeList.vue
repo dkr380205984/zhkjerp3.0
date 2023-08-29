@@ -1066,4 +1066,7 @@ export default Vue.extend({
 
 <style lang="less">
 @import '~@/assets/css/workshopManagement/payTimeList.less';
+.el-checkbox{
+  width: 14px;
+}
 </style>

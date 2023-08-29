@@ -115,6 +115,7 @@
             <el-select
               v-model="ruleForm.staff_id"
               placeholder="员工姓名或编号搜索"
+              filterable
               style="width: 250px;"
               @change="changeStaff"
             >
@@ -430,95 +431,81 @@ export default Vue.extend({
           index: 5
         },
         {
-          key: 'staff_code',
-          name: '员工编号',
+          key: 'staff_label',
+          name: '员工编号姓名',
           ifShow: true,
           ifLock: false,
           index: 6
         },
         {
-          key: 'staff_name',
-          name: '员工姓名',
+          key: 'size_color_name',
+          name: '尺码颜色',
           ifShow: true,
           ifLock: false,
           index: 7
-        },
-        {
-          key: 'size_name',
-          name: '尺码',
-          ifShow: true,
-          ifLock: false,
-          index: 8
-        },
-        {
-          key: 'color_name',
-          name: '颜色',
-          ifShow: true,
-          ifLock: false,
-          index: 9
         },
         {
           key: 'price',
           name: '结算单价（元/件）',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 8
         },
         {
           key: 'complete_num',
           name: '完成数量（件）',
           ifShow: true,
           ifLock: false,
-          index: 11
+          index: 9
         },
         {
           key: 'extra_num',
           name: '额外数量（件）',
           ifShow: true,
           ifLock: false,
-          index: 12
+          index: 10
         },
         {
           key: 'number',
           name: '合计数量（件）',
           ifShow: true,
           ifLock: false,
-          index: 13
+          index: 11
         },
         {
           key: 'total_price',
           name: '结算总价（元）',
           ifShow: true,
           ifLock: false,
-          index: 14
+          index: 12
         },
         {
           key: 'b_number',
           name: 'B品数量（件）',
           ifShow: true,
           ifLock: false,
-          index: 15
+          index: 13
         },
         {
           key: 'shoddy_number',
           name: '次品数量（件）',
           ifShow: true,
           ifLock: false,
-          index: 16
+          index: 14
         },
         {
           key: 'shoddy_reason',
           name: '次品原因',
           ifShow: true,
           ifLock: false,
-          index: 17
+          index: 15
         },
         {
           key: 'date',
           name: '操作日期',
           ifShow: true,
           ifLock: false,
-          index: 18
+          index: 16
         }
       ],
       substandardReason: [
@@ -778,6 +765,7 @@ export default Vue.extend({
       this.ruleForm.color_name = itemSizeColor.color_name
       this.ruleForm.size_id = itemSizeColor.size_id
       this.ruleForm.color_id = itemSizeColor.color_id
+      this.ruleForm.size_color_name = itemSizeColor.name
       this.ruleForm.size_color_id = itemSizeColor.size_id + ',' + itemSizeColor.color_id
       this.ruleForm.product_code = itemPro.product_code
       this.ruleForm.product_info = this.$clone(itemPro)
@@ -804,6 +792,7 @@ export default Vue.extend({
       })
       this.ruleForm.staff_name = obj.name
       this.ruleForm.staff_code = obj.code
+      this.ruleForm.staff_label = obj.label
     },
     changeSizeColor(e: any) {
       let obj = this.ruleForm.selectSizeColor.find((item: any) => {
@@ -813,6 +802,8 @@ export default Vue.extend({
       this.ruleForm.color_name = obj.color_name
       this.ruleForm.size_id = obj.size_id
       this.ruleForm.color_id = obj.color_id
+      this.ruleForm.size_color_name = obj.name
+      this.$forceUpdate()
     },
     lostEdit(item: any) {
       this.ruleForm = this.$clone(item)
