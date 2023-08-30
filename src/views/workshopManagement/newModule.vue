@@ -47,12 +47,22 @@
         <div class="filterCtn">
           <div class="elCtn">
             <div class="filterLabel">订单号：</div>
-            <el-input v-model="ruleForm.order_code" placeholder="输入订单号搜索" style="width: 250px;"></el-input>
+            <el-input
+              v-model="ruleForm.order_code"
+              placeholder="输入订单号搜索"
+              style="width: 250px"
+              @keyup.enter.native="openOrderCode"
+            ></el-input>
             <div class="blueBtn" @click="openOrderCode">查找</div>
           </div>
           <div class="elCtn">
             <div class="filterLabel">产品编号：</div>
-            <el-input v-model="ruleForm.product_code" placeholder="输入产品编号搜索" style="width: 250px;"></el-input>
+            <el-input
+              v-model="ruleForm.product_code"
+              placeholder="输入产品编号搜索"
+              style="width: 250px"
+              @keyup.enter.native="openProductCode"
+            ></el-input>
             <div class="blueBtn" @click="openProductCode">查找</div>
           </div>
           <div class="elCtn">
@@ -61,7 +71,7 @@
               v-model="ruleForm.size_color_id"
               @change="changeSizeColor"
               placeholder="请选择尺码颜色"
-              style="width: 250px;"
+              style="width: 250px"
             >
               <el-option
                 v-for="(item, index) in ruleForm.selectSizeColor"
@@ -82,12 +92,12 @@
               :options="processList"
               :show-all-levels="false"
               placeholder="请选择工序"
-              style="width: 250px;"
+              style="width: 250px"
               @change="getProcessDesc(ruleForm.process)"
             ></el-cascader>
             <div class="op0">查找</div>
           </div>
-          <div class="elCtn" style="width: calc(91% - 416px);">
+          <div class="elCtn" style="width: calc(91% - 416px)">
             <div class="filterLabel">工序说明：</div>
             <el-select
               v-model="ruleForm.process_desc"
@@ -97,7 +107,7 @@
               default-first-option
               collapse-tags
               placeholder="请填写工序说明"
-              style="width: calc(100% - 100px);"
+              style="width: calc(100% - 100px)"
             >
               <el-option
                 v-for="(itemSon, indexSon) in processDesc"
@@ -116,7 +126,7 @@
               v-model="ruleForm.staff_id"
               placeholder="员工姓名或编号搜索"
               filterable
-              style="width: 250px;"
+              style="width: 250px"
               @change="changeStaff"
             >
               <el-option v-for="item in staffList" :key="item.value" :label="item.label" :value="item.id"> </el-option>
@@ -129,7 +139,7 @@
               v-model="ruleForm.price"
               type="number"
               placeholder="请输入结算单价"
-              style="width: 250px;"
+              style="width: 250px"
             ></el-input>
             <div class="op0">查找</div>
           </div>
@@ -140,7 +150,7 @@
               type="date"
               placeholder="选择日期"
               :clearable="false"
-              style="width: 250px!important;"
+              style="width: 250px !important"
             >
             </el-date-picker>
           </div>
@@ -153,7 +163,7 @@
               type="number"
               placeholder="请输入完成数量"
               @input="getComplete"
-              style="width: 250px;"
+              style="width: 250px"
             >
               <template slot="append">件</template>
             </el-input>
@@ -166,7 +176,7 @@
               type="number"
               placeholder="额外数量、加头数量"
               @input="getComplete"
-              style="width: 250px;"
+              style="width: 250px"
             >
               <template slot="append">件</template>
             </el-input>
@@ -174,14 +184,14 @@
           </div>
           <div class="elCtn">
             <div class="filterLabel">合计数量：</div>
-            <el-input v-model="ruleForm.number" type="number" placeholder="自动计算" disabled style="width: 250px;">
+            <el-input v-model="ruleForm.number" type="number" placeholder="自动计算" disabled style="width: 250px">
             </el-input>
           </div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
             <div class="filterLabel">B品数量：</div>
-            <el-input v-model="ruleForm.b_number" type="number" placeholder="请输入B品数量" style="width: 250px;">
+            <el-input v-model="ruleForm.b_number" type="number" placeholder="请输入B品数量" style="width: 250px">
               <template slot="append">件</template>
             </el-input>
             <div class="op0">查找</div>
@@ -192,7 +202,7 @@
               v-model="ruleForm.shoddy_number"
               type="number"
               placeholder="次品数量、加头数量"
-              style="width: 250px;"
+              style="width: 250px"
             >
               <template slot="append">件</template>
             </el-input>
@@ -208,7 +218,7 @@
               default-first-option
               collapse-tags
               placeholder="请选择次品原因"
-              style="width: 250px;"
+              style="width: 250px"
               @change="$forceUpdate"
             >
               <el-option
@@ -244,23 +254,47 @@
       :data.sync="listKey"
       :originalData="originalSetting"
     ></zh-list-setting>
-    <el-dialog title="选择订单" width="40%" :visible.sync="showOrderCode" :before-close="closeOrderCode">
-      <div v-loading="loadingOrder">
-        <div style="display: flex;color: #333333;justify-content: space-between;">
-          <div style="font-weight: bolder;font-size: 16px">订单号</div>
-          <div style="font-weight: bolder;font-size: 16px">下单公司</div>
-          <div style="font-weight: bolder;font-size: 16px">下单时间</div>
+    <el-dialog title="选择订单" width="70%" :visible.sync="showOrderCode" :before-close="closeOrderCode" class="log">
+      <div class="filterCtn">
+        <div class="elCtn">
+          <div class="filterLabel">订单类型：</div>
+          <el-select v-model="order_type" style="width: 250px" placeholder="请选择订单类型" @change="getOrderList">
+            <el-option label="全部" :value="''"> </el-option>
+            <el-option label="订单" :value="1"> </el-option>
+            <el-option label="样单" :value="2"> </el-option>
+          </el-select>
+        </div>
+        <div class="elCtn">
+          <div class="filterLabel">下单公司：</div>
+          <el-cascader
+            @change="getOrderList"
+            placeholder="筛选下单公司"
+            v-model="client_id"
+            filterable
+            :options="clientList"
+            clearable
+          >
+          </el-cascader>
+        </div>
+      </div>
+      <div v-loading="loadingOrder" style="margin-top: 16px">
+        <div style="display: flex; color: #333333; justify-content: space-between">
+          <div style="font-weight: bolder; font-size: 16px; width: 25%">订单类型</div>
+          <div style="font-weight: bolder; font-size: 16px; width: 25%">订单号</div>
+          <div style="font-weight: bolder; font-size: 16px; width: 25%">下单公司</div>
+          <div style="font-weight: bolder; font-size: 16px; width: 25%">下单时间</div>
         </div>
         <div
-          style="display: flex;color: #333333;justify-content: space-between;padding: 8px;"
+          style="display: flex; color: #333333; justify-content: space-between; padding: 8px"
           v-for="(item, index) in orderList"
           class="orderItem"
           :key="index + 'orderList'"
           @click="changeOrderCode(item)"
         >
-          <div style="font-size: 16px">{{ item.value }}</div>
-          <div style="font-size: 16px">{{ item.client_name }}</div>
-          <div style="font-size: 16px">{{ item.created_at }}</div>
+          <div style="font-size: 16px; width: 25%">{{ item.order_type === 1 ? '订单' : '样单' }}</div>
+          <div style="font-size: 16px; width: 25%">{{ item.value }}</div>
+          <div style="font-size: 16px; width: 25%">{{ item.client_name }}</div>
+          <div style="font-size: 16px; width: 25%">{{ item.created_at }}</div>
         </div>
         <div class="listCtn" style="padding: 0">
           <div class="pageCtn">
@@ -285,7 +319,22 @@
             <span class="el-icon-close" @click="closeAddOrder()"></span>
           </div>
         </div>
-        <div class="contentCtn" style="padding-top: 15px; max-height: 700px">
+        <div class="contentCtn log" style="padding-top: 15px; max-height: 700px">
+          <div class="filterCtn">
+            <div class="elCtn">
+              <div class="filterLabel">订单类型：</div>
+              <el-select
+                v-model="order_type"
+                style="width: 250px"
+                placeholder="请选择订单类型"
+                @change="openProductCode"
+              >
+                <el-option label="全部" :value="''"> </el-option>
+                <el-option label="订单" :value="1"> </el-option>
+                <el-option label="样单" :value="2"> </el-option>
+              </el-select>
+            </div>
+          </div>
           <div class="editCtn packOrder">
             <div class="tableCtn">
               <div class="tbody hasTop">
@@ -321,7 +370,7 @@
                           style="width: 45px; height: 45px; padding: 10px 0"
                         ></el-image>
                       </div>
-                      <div class="tcol noPad" style="flex: 4.85;cursor: pointer;">
+                      <div class="tcol noPad" style="flex: 4.85; cursor: pointer">
                         <div
                           class="trow colorItem"
                           v-for="(itemSizeColor, indexSizeColor) in itemPro.colorSizeInfo"
@@ -382,6 +431,8 @@ export default Vue.extend({
       addOrder: false,
       showPopupLoading: false,
       loadingOrder: false,
+      order_type: '',
+      client_id: '',
       page: 1,
       orderPage: 1,
       productPage: 1,
@@ -628,7 +679,7 @@ export default Vue.extend({
         .detail({
           type: 17
         })
-        .then(res => {
+        .then((res) => {
           this.listSettingId = res.data.data ? res.data.data.id : null
           this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
           this.loading = false
@@ -643,7 +694,7 @@ export default Vue.extend({
         .delete({
           id: [id]
         })
-        .then(res => {
+        .then((res) => {
           if (res.data.status === true) {
             this.$message.success('删除成功')
           }
@@ -661,12 +712,12 @@ export default Vue.extend({
           .simpleList({
             order_code: this.ruleForm.order_code,
             product_code: this.ruleForm.product_code,
-            order_type: '',
-            client_id: '',
+            order_type: this.order_type,
+            client_id: this.client_id,
             page: this.productPage,
             limit: 10
           })
-          .then(res => {
+          .then((res) => {
             res.data.data.items.forEach((item: any) => {
               item.product_info = item.product_data.map((itemColor: any) => {
                 itemColor.colorSizeInfo = this.$clone(itemColor.product_info)
@@ -678,7 +729,7 @@ export default Vue.extend({
             this.showPopupLoading = false
           })
       } else {
-        order.detail({ id: this.ruleForm.order_id }).then(res => {
+        order.detail({ id: this.ruleForm.order_id }).then((res) => {
           let data = res.data.data
           this.productList = [
             {
@@ -708,6 +759,8 @@ export default Vue.extend({
     },
     closeOrderCode() {
       this.showOrderCode = false
+      this.order_type = ''
+      this.client_id = ''
       this.orderList = []
     },
     getOrderList() {
@@ -716,16 +769,22 @@ export default Vue.extend({
       order
         .simpleList({
           order_code: this.ruleForm.order_code,
-          order_type: '',
-          client_id: '',
+          order_type: this.order_type,
+          client_id: this.client_id ? this.client_id[2] : '',
           page: this.orderPage,
           limit: 10
         })
-        .then(res => {
+        .then((res) => {
           if (res.data.status) {
             let arr: any = []
             res.data.data.items.forEach((item: any) => {
-              arr.push({ value: item.code, id: item.id, created_at: item.created_at, client_name: item.client_name })
+              arr.push({
+                value: item.code,
+                id: item.id,
+                created_at: item.created_at,
+                client_name: item.client_name,
+                order_type: item.order_type
+              })
             })
             this.orderList = arr
             this.orderTotal = res.data.data.total
@@ -742,6 +801,7 @@ export default Vue.extend({
     },
     closeAddOrder() {
       this.addOrder = false
+      this.order_type = ''
       this.productList = []
     },
     contentHtml(content: string) {
@@ -918,12 +978,12 @@ export default Vue.extend({
       checkPriceBeyond({
         doc_type: 14,
         data: checkArr
-      }).then(res => {
+      }).then((res) => {
         if (this.isEdit) {
           params.type = 1
         }
         if (res.data.data.length === 0) {
-          workshop.save(params).then(res => {
+          workshop.save(params).then((res) => {
             if (res.data.status) {
               if (this.isEdit) {
                 let index = this.list.findIndex((item: { id: number }) => item.id === this.ruleForm.id)
@@ -974,7 +1034,7 @@ export default Vue.extend({
             type: 'warning'
           })
             .then(() => {
-              workshop.save(params).then(res => {
+              workshop.save(params).then((res) => {
                 if (res.data.status) {
                   if (this.isEdit) {
                     let index = this.list.findIndex((item: { id: number }) => item.id === this.ruleForm.id)
@@ -1019,14 +1079,26 @@ export default Vue.extend({
       })
     }
   },
+  computed: {
+    clientList() {
+      return this.$store.state.api.clientType.arr.filter((item: { type: any }) => Number(item.type) === 1)
+    }
+  },
   created() {
+    this.$checkCommonInfo([
+      {
+        checkWhich: 'api/clientType',
+        getInfoMethed: 'dispatch',
+        getInfoApi: 'getClientTypeAsync'
+      }
+    ])
     // 拿到部门
     staff
       .departmentList({
         keyword: '',
         limit: ''
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.status) {
           this.departmentList = res.data.data
           this.departmentName = res.data.data.find((res: any) => {
@@ -1038,7 +1110,7 @@ export default Vue.extend({
               status: 1,
               department: this.departmentName
             })
-            .then(ress => {
+            .then((ress) => {
               this.staffList = ress.data.data.map((item: any) => {
                 item.label = item.code.slice(item.code.length - 4) + '-' + item.name
                 return item
@@ -1048,11 +1120,11 @@ export default Vue.extend({
       })
 
     // 拿到工序
-    process.list({ type: 2 }).then(res => {
+    process.list({ type: 2 }).then((res) => {
       let arr: any = []
       res.data.data.forEach((item: any) => {
         arr.push({
-          label: item.name,
+          label: item.code ? item.code + '-' + item.name : item.name,
           value: item.name
         })
       })
@@ -1061,11 +1133,11 @@ export default Vue.extend({
         value: 2,
         children: arr
       })
-      process.list({ type: 3 }).then(res => {
+      process.list({ type: 3 }).then((res) => {
         let arr: any = []
         res.data.data.forEach((item: any) => {
           arr.push({
-            label: item.name,
+            label: item.code ? item.code + '-' + item.name : item.name,
             value: item.name
           })
         })
