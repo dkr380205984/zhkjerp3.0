@@ -70,7 +70,7 @@
               <span v-for="(itemChild,indexChild) in item.material_order_info"
                 :key="indexChild">{{indexChild}};</span>
             </div>
-            <div class="col">{{item.material_order_info | cmpTotal}}kg</div>
+            <div class="col">{{item.material_order_info | cmpTotal}}{{item.unit || 'kg'}}</div>
             <div class="col oprCtn">
               <div class="opr hoverBlue"
                 @click="$router.push('/materialPlanOrder/detail?id='+item.id)">详情</div>
@@ -115,7 +115,8 @@
             <div class="label isMust">物料类型：</div>
             <div class="info elCtn">
               <el-select placeholder="请选择物料类型"
-                v-model="materialPlanOrderClient.material_type">
+                v-model="materialPlanOrderClient.material_type"
+                @change="(ev)=>{materialPlanOrderClient.unit=(ev===1)?'kg':'m'}">
                 <el-option v-for="item in yarnTypeList"
                   :key="item.value"
                   :label="item.label"
@@ -138,7 +139,10 @@
             <div class="info elCtn">
               <el-input placeholder="请输入预订购总数"
                 v-model="materialPlanOrderClient.total_number">
-                <template slot="append">kg</template>
+                <template slot="append">
+                  <el-input v-model="materialPlanOrderClient.unit"
+                    placeholder="单位"></el-input>
+                </template>
               </el-input>
             </div>
           </div>
@@ -191,7 +195,8 @@ export default Vue.extend({
         client_id: '',
         tree_data: [],
         total_number: '',
-        desc: ''
+        desc: '',
+        unit: 'kg'
       }
     }
   },
@@ -373,4 +378,16 @@ export default Vue.extend({
 
 <style lang="less" scoped>
 @import '~@/assets/css/materialPlanOrder/list.less';
+::v-deep .el-input-group__append {
+  padding: 0;
+  .el-input {
+    width: 45px;
+    .el-input__inner {
+      padding: 0 8px;
+      border: 0;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+  }
+}
 </style>

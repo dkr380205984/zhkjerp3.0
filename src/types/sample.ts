@@ -66,4 +66,7 @@ export interface SampleInfo {
     }>
   }>
   client_edit_idea?: string
+  price?: string
+  price_desc?: string
+  price_unit?: string
 }

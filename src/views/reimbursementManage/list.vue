@@ -15,7 +15,7 @@
               placeholder="报销单编号或报销人姓名搜索"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="elCtn">
+          <div class="elCtn hasIcon">
             <el-select v-model="group"
               placeholder="小组筛选"
               @change="changeRouter"
@@ -25,6 +25,13 @@
                 :label="item.name"
                 :value="item.id"> </el-option>
             </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存负责小组筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="$setLocalStorage('group_id', group_id,true)"></i>
+            </el-tooltip>
           </div>
           <div class="elCtn">
             <el-select @change="changeRouter"
@@ -223,6 +230,7 @@ export default Vue.extend({
         query.end_time || this.$GetDateStr(0)
       ]
       this.limit = Number(query.limit) || 10
+      this.group = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
     },
     reset() {
       this.$confirm('是否重置所有筛选条件?', '提示', {

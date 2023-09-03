@@ -1226,6 +1226,7 @@
                     @click="
                       materialStockFilter.material_name = item.material_name
                       materialStockFilter.material_color = materialStockFilter.color_flag ? '白胚' : item.material_color
+                      materialStockFilter.store_type = item.yarn_type || 1
                       searchMaterial()
                     "></span>
                 </div>
@@ -2738,6 +2739,7 @@ export default Vue.extend({
         batch_code: '',
         color_code: '',
         material_color: '白胚',
+        store_type: 1,
         color_flag: true
       },
       materialStockInfo: {
@@ -3406,6 +3408,7 @@ export default Vue.extend({
         batch_code: '',
         color_code: '',
         material_color: '白胚',
+        store_type: 1,
         color_flag: true
       }
     },
@@ -3421,7 +3424,8 @@ export default Vue.extend({
           material_color: this.materialStockFilter.material_color,
           vat_code: this.materialStockFilter.vat_code,
           color_code: this.materialStockFilter.color_code,
-          batch_code: this.materialStockFilter.batch_code
+          batch_code: this.materialStockFilter.batch_code,
+          store_type: this.materialStockFilter.store_type
         })
         .then((res) => {
           if (res.data.status) {

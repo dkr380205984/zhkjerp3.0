@@ -1,68 +1,72 @@
 <template>
-  <div id="newModule" class="bodyContainer">
+  <div id="newModule"
+    class="bodyContainer">
     <div class="module">
       <div class="listCtn">
         <div class="filterCtn">
-          <div class="elCtn" style="position: relative">
-            <el-select
-              style="width: 95%"
+          <div class="elCtn"
+            style="position: relative">
+            <el-select style="width: 95%"
               @change="changeDepartment()"
               v-model="department"
               placeholder="部门筛选"
-              clearable
-            >
-              <el-option
-                v-for="(item, index) in departmentList"
+              clearable>
+              <el-option v-for="(item, index) in departmentList"
                 :key="index"
                 :value="item.id"
-                :label="item.name"
-              ></el-option>
+                :label="item.name"></el-option>
             </el-select>
-            <el-tooltip class="item" effect="dark" content="保存部门筛选" placement="top">
-              <i
-                class="el-icon-upload hoverOrange"
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存部门筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
                 @click="
                   $setLocalStorage('department', department)
                   $message.success('保存成功')
-                "
-              ></i>
+                "></i>
             </el-tooltip>
           </div>
-          <div class="elCtn" style="position: relative">
-            <el-cascader
-              style="width: 95%"
+          <div class="elCtn"
+            style="position: relative">
+            <el-cascader style="width: 95%"
               v-model="process"
               :options="processList"
               :show-all-levels="false"
               filterable
               placeholder="工序筛选"
-              clearable
-            ></el-cascader>
-            <el-tooltip class="item" effect="dark" content="保存工序筛选" placement="top">
-              <i
-                class="el-icon-upload hoverOrange"
+              clearable></el-cascader>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存工序筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
                 @click="
                   $setLocalStorage('process', process)
                   $message.success('保存成功')
-                "
-              ></i>
+                "></i>
             </el-tooltip>
           </div>
-          <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(3)">其它功能</div>
-          <div class="btn backHoverOrange fl" style="margin-left: 20px" @click="showSetting = true">列表设置</div>
+          <div class="btn backHoverBlue fr"
+            style="margin-left: 20px"
+            @click="updateNumber(3)">其它功能</div>
+          <div class="btn backHoverOrange fl"
+            style="margin-left: 20px"
+            @click="showSetting = true">列表设置</div>
         </div>
       </div>
       <div class="listCtn">
-        <zh-list :list="showList" :listKey="listKey" :loading="loading" :oprList="oprList"></zh-list>
+        <zh-list :list="showList"
+          :listKey="listKey"
+          :loading="loading"
+          :oprList="oprList"></zh-list>
         <div class="pageCtn">
-          <el-pagination
-            background
+          <el-pagination background
             :page-size="10"
             layout="prev, pager, next, jumper"
             :total="list.length"
             :current-page.sync="page"
-            @current-change="getShowList"
-          >
+            @current-change="getShowList">
           </el-pagination>
         </div>
       </div>
@@ -72,27 +76,29 @@
         日志添加区
       </div>
       <div class="listCtn clearfix">
-        <div class="btn backHoverBlue fl" @click="confirmSubmit">确认{{ isEdit ? '修改' : '提交' }}</div>
-        <div class="btn backHoverOrange fl" style="margin-left: 20px" @click="clearAll">全部清空</div>
+        <div class="btn backHoverBlue fl"
+          @click="confirmSubmit">确认{{ isEdit ? '修改' : '提交' }}</div>
+        <div class="btn backHoverOrange fl"
+          style="margin-left: 20px"
+          @click="clearAll">全部清空</div>
       </div>
     </div>
     <!-- 列表设置 -->
-    <zh-list-setting
-      @close="showSetting = false"
+    <zh-list-setting @close="showSetting = false"
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
       :type="17"
       :data.sync="listKey"
-      :originalData="originalSetting"
-    ></zh-list-setting>
+      :originalData="originalSetting"></zh-list-setting>
   </div>
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 import { process, listSetting, staff, exportExcel, workshop, check } from '@/assets/js/api'
 import { number } from 'echarts'
-export default {
+export default Vue.extend({
   name: 'newModule',
   data(): {
     departmentList: { id: string | number; name: string }[]
@@ -318,7 +324,7 @@ export default {
         .detail({
           type: 17
         })
-        .then(res => {
+        .then((res) => {
           this.listSettingId = res.data.data ? res.data.data.id : null
           this.listKey = res.data.data ? JSON.parse(res.data.data.value) : this.$clone(this.originalSetting)
           this.loading = false
@@ -334,7 +340,7 @@ export default {
         .departmentDetail({
           id: this.department
         })
-        .then(res => {
+        .then((res) => {
           this.departmentName = res.data.data.name
         })
     },
@@ -347,7 +353,7 @@ export default {
         .delete({
           id: [id]
         })
-        .then(res => {
+        .then((res) => {
           if (res.data.status === true) {
             this.$message.success('删除成功')
           }
@@ -396,7 +402,7 @@ export default {
         keyword: '',
         limit: ''
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.status) {
           this.departmentList = res.data.data
           this.departmentName = res.data.data.find((res: any) => {
@@ -407,7 +413,7 @@ export default {
       })
 
     // 拿到工序
-    process.list({ type: 2 }).then(res => {
+    process.list({ type: 2 }).then((res) => {
       let arr: any = []
       res.data.data.forEach((item: any) => {
         arr.push({
@@ -420,7 +426,7 @@ export default {
         value: 2,
         children: arr
       })
-      process.list({ type: 3 }).then(res => {
+      process.list({ type: 3 }).then((res) => {
         let arr: any = []
         res.data.data.forEach((item: any) => {
           arr.push({
@@ -437,15 +443,14 @@ export default {
     })
 
     this.department = Number(this.$getLocalStorage('department')) || ''
-    let processName = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+    let processName: any = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
 
-    // @ts-ignore
     processName = processName.length > 0 ? [Number(processName[0]), processName[1]] : processName
     this.process = processName
 
     this.getListSetting()
   }
-}
+})
 </script>
 
 <style lang="less" scoped>

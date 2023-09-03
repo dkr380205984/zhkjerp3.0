@@ -137,7 +137,7 @@
                     placement="top">
                     <i class="el-icon-upload hoverOrange fr"
                       style="line-height: 38px; font-size: 18px; cursor: pointer"
-                      @click="$openUrl('/setting?pName=产品设置&cName=品类')"></i>
+                      @click="$openUrl('/setting?pName=样品设置&cName=品类')"></i>
                   </el-tooltip>
                 </div>
                 <div class="info elCtn"
@@ -189,7 +189,7 @@
                     placement="top">
                     <i class="el-icon-upload hoverOrange fr"
                       style="line-height: 38px; font-size: 18px; cursor: pointer"
-                      @click="$openUrl('/setting?pName=产品设置&cName=款式')"></i>
+                      @click="$openUrl('/setting?pName=样品设置&cName=款式')"></i>
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
@@ -358,7 +358,7 @@
                     placement="top">
                     <i class="el-icon-upload hoverOrange fr"
                       style="line-height: 38px; font-size: 18px; cursor: pointer"
-                      @click="$openUrl('/setting?pName=产品设置&cName=成分')"></i>
+                      @click="$openUrl('/setting?pName=样品设置&cName=成分')"></i>
                   </el-tooltip>
                 </div>
                 <div class="info elCtn">
@@ -716,6 +716,65 @@
             </div>
           </div>
         </div>
+        <div class="module">
+          <div class="titleCtn flexBetween">
+            <div class="title"
+              style="display: flex;align-items: center;">价格信息
+              <el-switch style="margin-left:8px"
+                v-model="have_price">
+              </el-switch>
+            </div>
+          </div>
+          <div class="editCtn"
+            v-show="have_price">
+            <div class="partCtn">
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">样品价格</span>
+                    <span class="explanation">(必填)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input placeholder="请输入样品价格"
+                      v-model="sampleInfo.price">
+                    </el-input>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="label">
+                    <span class="text">价格单位</span>
+                    <span class="explanation">(必填)</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-select placeholder="请选择价格单位"
+                      v-model="sampleInfo.price_unit">
+                      <el-option v-for="item in unitArr"
+                        :key="item.name"
+                        :label="item.name"
+                        :value="item.name"
+                        class="between">
+                        <span>{{item.name}}</span>
+                        <span class="gray">({{item.short}})</span>
+                      </el-option>
+                    </el-select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">
+                    <span class="text">备注信息</span>
+                  </div>
+                  <div class="info elCtn">
+                    <el-input placeholder="请输入备注信息"
+                      v-model="sampleInfo.price_desc">
+                    </el-input>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="oprCtn">
         <span class="btn borderBtn"
@@ -735,6 +794,7 @@ import Vue from 'vue'
 import { SampleInfo } from '@/types/sample'
 import { CascaderInfo } from '@/types/vuex'
 import { sample, sizeModule } from '@/assets/js/api'
+import { moneyArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   props: {
     // 注意：修改样品有两种情况，一种是继续打样，表面修改，实际新增，一种就是普通的修改样品
@@ -796,6 +856,8 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      unitArr: moneyArr,
+      have_price: false,
       loading: false,
       saveLock: false,
       have_part: false,
@@ -1038,7 +1100,7 @@ export default Vue.extend({
           .list({
             limit: 99,
             page: 1,
-            // product_type: 2, // 导入可以搜产品
+            // product_type: 2, // 导入可以搜样品
             product_code: this.searchSampleCode,
             order_code: this.searchSampleOrderCode
           })
@@ -1058,7 +1120,7 @@ export default Vue.extend({
         })
         .then((res) => {
           const data = res.data.data
-          data.product_code = '' // 导入产品不要把产品编号导进来
+          data.product_code = '' // 导入样品不要把样品编号导进来
           this.changeDetailToEdit(data)
           this.loading = false
         })
@@ -1453,7 +1515,10 @@ export default Vue.extend({
         this.sampleInfo.editor = null
       }
       this.sampleInfo = {
-        id: this.pid ? null : this.id, // 打样的时候id用于查询样品，还得新建产品
+        price: data.price,
+        price_desc: data.price_desc,
+        price_unit: data.price_unit,
+        id: this.pid ? null : this.id, // 打样的时候id用于查询样品，还得新建样品
         pid: this.pid,
         pid_status: this.pid ? this.pid_status : null,
         product_type: 2,
@@ -1551,6 +1616,7 @@ export default Vue.extend({
           }
         })
       }
+      this.have_price = !!this.sampleInfo.price
       this.have_part = this.sampleInfo.part_data.length > 0
       this.getUnit([data.category_id as number, data.secondary_category_id as number])
       this.$nextTick(() => {

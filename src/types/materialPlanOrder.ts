@@ -6,4 +6,5 @@ export interface MaterialPlanOrderClient {
   tree_data?: number[]
   total_number: string | number
   desc: string
+  unit?: string
 }

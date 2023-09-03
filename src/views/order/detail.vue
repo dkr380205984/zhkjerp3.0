@@ -2209,7 +2209,7 @@
       :order_time_id="orderInfo.time_data[0].id"
       :show="orderLogFlag"
       @close="orderLogFlag=false"></zh-order-log>
-    <product-detail :data="productDetail"
+    <product-detail :id="productDetail.product_id"
       :show="productShow"
       @close="productShow = false"></product-detail>
     <zh-check @close="checkFlag=false"
