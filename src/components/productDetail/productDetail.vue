@@ -296,6 +296,33 @@
                     </div>
                   </div>
                 </div>
+                <div class="trow"
+                  v-if="productInfo.price">
+                  <div class="tcol"
+                    style="text-align:center">价格信息</div>
+                  <div class="tcol"
+                    style="flex:9">
+                    <div class="detailCtn">
+                      <div class="row">
+                        <div class="col">
+                          <div class="label">产品价格：</div>
+                          <div class="text">{{productInfo.price}}</div>
+                        </div>
+                        <div class="col">
+                          <div class="label">价格单位：</div>
+                          <div class="text">{{productInfo.price_unit}}</div>
+                        </div>
+                      </div>
+                      <div class="row">
+
+                        <div class="col">
+                          <div class="label">价格备注：</div>
+                          <div class="text">{{productInfo.price_desc}}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

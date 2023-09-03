@@ -700,7 +700,7 @@ export default Vue.extend({
           size_id: item.value.split('/')[0],
           color_id: item.value.split('/')[1],
           number: '',
-          price: 0
+          price: product.price
         }
       })
     },

@@ -163,7 +163,7 @@
                   <div class="tcol">{{itemChild.material_color}}</div>
                   <div class="tcol">{{itemChild.attribute}}</div>
                   <div class="tcol">{{itemChild.batch_code}}/{{itemChild.vat_code}}/{{itemChild.color_code}}</div>
-                  <div class="tcol">{{itemChild.number}}kg</div>
+                  <div class="tcol">{{itemChild.number}}{{itemChild.unit}}</div>
                   <div class="tcol">{{itemChild.item||0}}件</div>
                   <div class="tcol">{{itemChild.price||0}}元</div>
                 </div>
@@ -173,6 +173,8 @@
               <div class="tcol oprCtn">
                 <div class="opr hoverRed"
                   @click="deleteMaterialStock(item.id)">删除</div>
+                <span class="opr hoverBlue"
+                  @click="$openUrl('/store/materialLogPrint?id='+item.id + '&type=' + item.action_type)">打印</span>
               </div>
             </div>
             <div class="trow noData"
@@ -239,7 +241,7 @@
               <div class="tcol">{{item.material_name}}</div>
               <div class="tcol">{{item.material_color}}</div>
               <div class="tcol">{{item.attribute}}</div>
-              <div class="tcol">{{item.number}}kg</div>
+              <div class="tcol">{{item.number}}{{item.unit||'kg'}}</div>
             </div>
             <div class="trow noData"
               v-if="materialStsList.length===0">暂无数据</div>

@@ -964,7 +964,7 @@ export default Vue.extend({
       if (!this.orderInfo.time_data.batch_data[0].product_data[0].product_id) {
         this.orderInfo.time_data.batch_data[0].product_data = []
       }
-      let productInfo = {
+      let productInfo: any = {
         product_id: product.id as number,
         quote_product_id: '',
         size_color_list: [], // 用于下拉框选择尺码颜色
@@ -981,9 +981,7 @@ export default Vue.extend({
       product.size_data.forEach((itemSize: any) => {
         product.color_data.forEach((itemColor: any) => {
           productInfo.size_color_list.push({
-            // @ts-ignore
             label: itemSize.name + '/' + itemColor.name,
-            // @ts-ignore
             value: itemSize.id + '/' + itemColor.id
           })
         })
@@ -995,7 +993,7 @@ export default Vue.extend({
           size_id: item.value.split('/')[0],
           color_id: item.value.split('/')[1],
           number: '',
-          price: 0
+          price: product.price
         }
       })
       productInfo.quote_product_id = product.quote_product_id as string

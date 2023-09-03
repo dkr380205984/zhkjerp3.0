@@ -715,6 +715,65 @@
               </div>
             </div>
           </div>
+          <div class="module">
+            <div class="titleCtn flexBetween">
+              <div class="title"
+                style="display: flex;align-items: center;">价格信息
+                <el-switch style="margin-left:8px"
+                  v-model="have_price">
+                </el-switch>
+              </div>
+            </div>
+            <div class="editCtn"
+              v-show="have_price">
+              <div class="partCtn">
+                <div class="row">
+                  <div class="col">
+                    <div class="label">
+                      <span class="text">产品价格</span>
+                      <span class="explanation">(必填)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-input placeholder="请输入产品价格"
+                        v-model="productInfo.price">
+                      </el-input>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="label">
+                      <span class="text">价格单位</span>
+                      <span class="explanation">(必填)</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-select placeholder="请选择价格单位"
+                        v-model="productInfo.price_unit">
+                        <el-option v-for="item in unitArr"
+                          :key="item.name"
+                          :label="item.name"
+                          :value="item.name"
+                          class="between">
+                          <span>{{item.name}}</span>
+                          <span class="gray">({{item.short}})</span>
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="label">
+                      <span class="text">备注信息</span>
+                    </div>
+                    <div class="info elCtn">
+                      <el-input placeholder="请输入备注信息"
+                        v-model="productInfo.price_desc">
+                      </el-input>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </template>
         <template v-if="step===2">
           <div class="module">
@@ -843,6 +902,7 @@ import { ProductStockInfo } from '@/types/productStock'
 import { ProductInfo } from '@/types/product'
 import { CascaderInfo } from '@/types/vuex'
 import { product, productStock, store, sizeModule } from '@/assets/js/api'
+import { moneyArr } from '@/assets/js/dictionary'
 export default Vue.extend({
   props: {
     show: {
@@ -906,6 +966,7 @@ export default Vue.extend({
     [propName: string]: any
   } {
     return {
+      unitArr: moneyArr,
       loading: false,
       saveLock: false,
       have_part: false,
@@ -995,7 +1056,10 @@ export default Vue.extend({
               }
             ]
           }
-        ]
+        ],
+        price: '',
+        price_unit: '元',
+        price_desc: ''
       },
       productStockInfo: {
         action_type: 1,
@@ -1024,7 +1088,8 @@ export default Vue.extend({
       sizeColorList: [],
       stockProId: '',
       stockProInfo: '', // 出入库展示用
-      storeArr: []
+      storeArr: [],
+      have_price: false
     }
   },
   computed: {
@@ -1586,6 +1651,9 @@ export default Vue.extend({
         this.productInfo.editor = null
       }
       this.productInfo = {
+        price: data.price,
+        price_desc: data.price_desc,
+        price_unit: data.price_unit,
         id: this.pid ? null : this.id, // 打样的时候id用于查询样品，还得新建产品
         pid: this.pid,
         pid_status: this.pid ? this.pid_status : null,
@@ -1700,6 +1768,7 @@ export default Vue.extend({
           }
         })
       }
+      this.have_price = !!this.productInfo.price
       this.have_part = this.productInfo.part_data.length > 0
       this.getUnit([data.category_id as number, data.secondary_category_id as number])
       this.$nextTick(() => {

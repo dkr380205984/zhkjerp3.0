@@ -48,6 +48,9 @@ export interface ProductInfo {
   }> | Array<string>  // 配色组
   // 配件信息
   part_data: PartInfo[]
+  price?: string
+  price_unit?: string
+  price_desc?: string
 }
 
 // 配件信息

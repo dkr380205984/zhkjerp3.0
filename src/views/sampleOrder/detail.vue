@@ -1489,7 +1489,7 @@
       :order_time_id="sampleOrderInfo.time_data[sampleOrderIndex].id"
       :show="orderLogFlag"
       @close="orderLogFlag=false"></zh-order-log>
-    <sample-detail :data="sampleDetail"
+    <sample-detail :id="sampleDetail.product_id"
       :show="sampleShow"
       @close="sampleShow = false"
       @afterDetailUpdate="afterSampleUpdate"></sample-detail>

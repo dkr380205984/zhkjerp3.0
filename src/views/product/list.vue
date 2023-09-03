@@ -300,11 +300,20 @@ export default Vue.extend({
           errVal: '0'
         },
         {
+          key: 'price',
+          name: '产品价格',
+          ifShow: true,
+          ifLock: false,
+          index: 7,
+          errVal: '0',
+          unitKey: 'price_unit'
+        },
+        {
           key: 'quote_price',
           name: '报价单价格',
           ifShow: true,
           ifLock: false,
-          index: 7,
+          index: 8,
           errVal: '0',
           unitKey: 'quote_unit'
         },
@@ -313,7 +322,7 @@ export default Vue.extend({
           name: '工艺单',
           ifShow: true,
           ifLock: false,
-          index: 8,
+          index: 9,
           filterArr: ['', '待创建', '已创建'],
           classArr: ['', 'orange', 'blue']
         },
@@ -322,7 +331,7 @@ export default Vue.extend({
           name: '报价单',
           ifShow: true,
           ifLock: false,
-          index: 9,
+          index: 10,
           filterArr: ['', '待创建', '已创建'],
           classArr: ['', 'orange', 'blue']
         },
@@ -331,14 +340,14 @@ export default Vue.extend({
           name: '创建人',
           ifShow: true,
           ifLock: false,
-          index: 10
+          index: 11
         },
         {
           key: 'created_at',
           name: '创建时间',
           ifShow: true,
           ifLock: false,
-          index: 11
+          index: 12
         }
       ]
     }

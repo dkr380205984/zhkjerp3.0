@@ -1,84 +1,108 @@
 <template>
-  <div id="newModule" class="bodyContainer">
+  <div id="newModule"
+    class="bodyContainer">
     <div class="module">
       <div class="listCtn">
         <div class="filterCtn">
-          <div class="elCtn" style="position: relative">
-            <el-cascader
-              style="width: 95%"
+          <div class="elCtn"
+            style="position: relative">
+            <el-select style="width: 95%"
+              @change="changeDepartment()"
+              v-model="department"
+              placeholder="部门筛选"
+              clearable>
+              <el-option v-for="(item, index) in departmentList"
+                :key="index"
+                :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存部门筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
+                @click="
+                  $setLocalStorage('department', department)
+                  $message.success('保存成功')
+                "></i>
+            </el-tooltip>
+          </div>
+          <div class="elCtn"
+            style="position: relative">
+            <el-cascader style="width: 95%"
               v-model="process"
               :options="processList"
               :show-all-levels="false"
               filterable
               placeholder="工序筛选"
-              clearable
-            ></el-cascader>
-            <el-tooltip class="item" effect="dark" content="保存工序筛选" placement="top">
-              <i
-                class="el-icon-upload hoverOrange"
+              clearable></el-cascader>
+            <el-tooltip class="item"
+              effect="dark"
+              content="保存工序筛选"
+              placement="top">
+              <i class="el-icon-upload hoverOrange"
                 @click="
                   $setLocalStorage('process', process)
                   $message.success('保存成功')
-                "
-              ></i>
+                "></i>
             </el-tooltip>
           </div>
-          <!-- <div class="btn backHoverBlue fr" style="margin-left: 20px" @click="updateNumber(3)">其它功能</div> -->
-          <div class="btn backHoverOrange fl" style="margin-left: 20px" @click="showSetting = true">列表设置</div>
+          <div class="btn backHoverBlue fr"
+            style="margin-left: 20px"
+            @click="updateNumber(3)">其它功能</div>
+          <div class="btn backHoverOrange fl"
+            style="margin-left: 20px"
+            @click="showSetting = true">列表设置</div>
         </div>
       </div>
       <div class="listCtn">
-        <zh-list :list="showList" :listKey="listKey" :loading="loading" :oprList="oprList"></zh-list>
+        <zh-list :list="showList"
+          :listKey="listKey"
+          :loading="loading"
+          :oprList="oprList"></zh-list>
         <div class="pageCtn">
-          <el-pagination
-            background
+          <el-pagination background
             :page-size="10"
             layout="prev, pager, next, jumper"
             :total="list.length"
             :current-page.sync="page"
-            @current-change="getShowList"
-          >
+            @current-change="getShowList">
           </el-pagination>
         </div>
       </div>
     </div>
-    <div class="module" v-loading="loadingModule">
+    <div class="module"
+      v-loading="loadingModule">
       <div class="listCtn log">
         <div class="filterCtn">
           <div class="elCtn">
             <div class="filterLabel">订单号：</div>
-            <el-input
-              v-model="ruleForm.order_code"
+            <el-input v-model="ruleForm.order_code"
               placeholder="输入订单号搜索"
               style="width: 250px"
-              @keyup.enter.native="openOrderCode"
-            ></el-input>
-            <div class="blueBtn" @click="openOrderCode">查找</div>
+              @keyup.enter.native="openOrderCode"></el-input>
+            <div class="blueBtn"
+              @click="openOrderCode">查找</div>
           </div>
           <div class="elCtn">
             <div class="filterLabel">产品编号：</div>
-            <el-input
-              v-model="ruleForm.product_code"
+            <el-input v-model="ruleForm.product_code"
               placeholder="输入产品编号搜索"
               style="width: 250px"
-              @keyup.enter.native="openProductCode"
-            ></el-input>
-            <div class="blueBtn" @click="openProductCode">查找</div>
+              @keyup.enter.native="openProductCode"></el-input>
+            <div class="blueBtn"
+              @click="openProductCode">查找</div>
           </div>
           <div class="elCtn">
             <div class="filterLabel">尺码颜色：</div>
-            <el-select
-              v-model="ruleForm.size_color_id"
+            <el-select v-model="ruleForm.size_color_id"
               @change="changeSizeColor"
               placeholder="请选择尺码颜色"
-              style="width: 250px"
-            >
-              <el-option
-                v-for="(item, index) in ruleForm.selectSizeColor"
+              style="width: 250px">
+              <el-option v-for="(item, index) in ruleForm.selectSizeColor"
                 :key="index + 'ruleForm.selectSizeColor'"
                 :label="item.name"
-                :value="item.size_color_id"
-              >
+                :value="item.size_color_id">
               </el-option>
             </el-select>
           </div>
@@ -86,35 +110,30 @@
         <div class="filterCtn">
           <div class="elCtn">
             <div class="filterLabel">生产工序：</div>
-            <el-cascader
-              v-model="ruleForm.process"
+            <el-cascader v-model="ruleForm.process"
               filterable
               :options="processList"
               :show-all-levels="false"
               placeholder="请选择工序"
               style="width: 250px"
-              @change="getProcessDesc(ruleForm.process)"
-            ></el-cascader>
+              @change="getProcessDesc(ruleForm.process)"></el-cascader>
             <div class="op0">查找</div>
           </div>
-          <div class="elCtn" style="width: calc(91% - 416px)">
+          <div class="elCtn"
+            style="width: calc(91% - 416px)">
             <div class="filterLabel">工序说明：</div>
-            <el-select
-              v-model="ruleForm.process_desc"
+            <el-select v-model="ruleForm.process_desc"
               multiple
               filterable
               allow-create
               default-first-option
               collapse-tags
               placeholder="请填写工序说明"
-              style="width: calc(100% - 100px)"
-            >
-              <el-option
-                v-for="(itemSon, indexSon) in processDesc"
+              style="width: calc(100% - 100px)">
+              <el-option v-for="(itemSon, indexSon) in processDesc"
                 :key="itemSon + indexSon"
                 :label="itemSon"
-                :value="itemSon"
-              >
+                :value="itemSon">
               </el-option>
             </el-select>
           </div>
@@ -122,96 +141,93 @@
         <div class="filterCtn">
           <div class="elCtn">
             <div class="filterLabel">员工姓名：</div>
-            <el-select
-              v-model="ruleForm.staff_id"
+            <el-select v-model="ruleForm.staff_id"
               placeholder="员工姓名或编号搜索"
               filterable
               style="width: 250px"
-              @change="changeStaff"
-            >
-              <el-option v-for="item in staffList" :key="item.value" :label="item.label" :value="item.id"> </el-option>
+              @change="changeStaff">
+              <el-option v-for="item in staffList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.id"> </el-option>
             </el-select>
             <div class="op0">查找</div>
           </div>
           <div class="elCtn">
             <div class="filterLabel">结算单价：</div>
-            <el-input
-              v-model="ruleForm.price"
+            <el-input v-model="ruleForm.price"
               type="number"
               placeholder="请输入结算单价"
-              style="width: 250px"
-            ></el-input>
+              style="width: 250px"></el-input>
             <div class="op0">查找</div>
           </div>
           <div class="elCtn">
             <div class="filterLabel">操作日期：</div>
-            <el-date-picker
-              v-model="ruleForm.date"
+            <el-date-picker v-model="ruleForm.date"
               type="date"
               placeholder="选择日期"
               :clearable="false"
-              style="width: 250px !important"
-            >
+              style="width: 250px !important">
             </el-date-picker>
           </div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
             <div class="filterLabel">完成数量：</div>
-            <el-input
-              v-model="ruleForm.complete_num"
+            <el-input v-model="ruleForm.complete_num"
               type="number"
               placeholder="请输入完成数量"
               @input="getComplete"
-              style="width: 250px"
-            >
+              style="width: 250px">
               <template slot="append">件</template>
             </el-input>
             <div class="op0">查找</div>
           </div>
           <div class="elCtn">
             <div class="filterLabel">额外数量：</div>
-            <el-input
-              v-model="ruleForm.extra_num"
+            <el-input v-model="ruleForm.extra_num"
               type="number"
               placeholder="额外数量、加头数量"
               @input="getComplete"
-              style="width: 250px"
-            >
+              style="width: 250px">
               <template slot="append">件</template>
             </el-input>
             <div class="op0">查找</div>
           </div>
           <div class="elCtn">
             <div class="filterLabel">合计数量：</div>
-            <el-input v-model="ruleForm.number" type="number" placeholder="自动计算" disabled style="width: 250px">
+            <el-input v-model="ruleForm.number"
+              type="number"
+              placeholder="自动计算"
+              disabled
+              style="width: 250px">
             </el-input>
           </div>
         </div>
         <div class="filterCtn">
           <div class="elCtn">
             <div class="filterLabel">B品数量：</div>
-            <el-input v-model="ruleForm.b_number" type="number" placeholder="请输入B品数量" style="width: 250px">
+            <el-input v-model="ruleForm.b_number"
+              type="number"
+              placeholder="请输入B品数量"
+              style="width: 250px">
               <template slot="append">件</template>
             </el-input>
             <div class="op0">查找</div>
           </div>
           <div class="elCtn">
             <div class="filterLabel">次品数量：</div>
-            <el-input
-              v-model="ruleForm.shoddy_number"
+            <el-input v-model="ruleForm.shoddy_number"
               type="number"
               placeholder="次品数量、加头数量"
-              style="width: 250px"
-            >
+              style="width: 250px">
               <template slot="append">件</template>
             </el-input>
             <div class="op0">查找</div>
           </div>
           <div class="elCtn">
             <div class="filterLabel">次品原因：</div>
-            <el-select
-              v-model="ruleForm.shoddy_reason"
+            <el-select v-model="ruleForm.shoddy_reason"
               multiple
               filterable
               allow-create
@@ -219,197 +235,40 @@
               collapse-tags
               placeholder="请选择次品原因"
               style="width: 250px"
-              @change="$forceUpdate"
-            >
-              <el-option
-                v-for="item in substandardReason"
+              @change="$forceUpdate">
+              <el-option v-for="item in substandardReason"
                 :key="item.value + 'ciPinReason'"
                 :label="item.label"
-                :value="item.value"
-              >
+                :value="item.value">
               </el-option>
             </el-select>
           </div>
         </div>
       </div>
       <div class="listCtn clearfix">
-        <div class="btn backHoverBlue fl" @click="confirmSubmit">确认{{ isEdit ? '修改' : '提交' }}</div>
-        <div class="btn backHoverOrange fl" style="margin-left: 20px" @click="clearAll">全部清空</div>
+        <div class="btn backHoverBlue fl"
+          @click="confirmSubmit">确认{{ isEdit ? '修改' : '提交' }}</div>
+        <div class="btn backHoverOrange fl"
+          style="margin-left: 20px"
+          @click="clearAll">全部清空</div>
       </div>
     </div>
     <div class="bottomFixBar">
       <div class="main">
         <div class="btnCtn">
-          <div class="borderBtn" @click="$router.go(-1)">返回</div>
+          <div class="borderBtn"
+            @click="$router.go(-1)">返回</div>
         </div>
       </div>
     </div>
     <!-- 列表设置 -->
-    <zh-list-setting
-      @close="showSetting = false"
+    <zh-list-setting @close="showSetting = false"
       @afterSave="getListSetting"
       :show="showSetting"
       :id="listSettingId"
       :type="17"
       :data.sync="listKey"
-      :originalData="originalSetting"
-    ></zh-list-setting>
-    <el-dialog title="选择订单" width="70%" :visible.sync="showOrderCode" :before-close="closeOrderCode" class="log">
-      <div class="filterCtn">
-        <div class="elCtn">
-          <div class="filterLabel">订单类型：</div>
-          <el-select v-model="order_type" style="width: 250px" placeholder="请选择订单类型" @change="getOrderList">
-            <el-option label="全部" :value="''"> </el-option>
-            <el-option label="订单" :value="1"> </el-option>
-            <el-option label="样单" :value="2"> </el-option>
-          </el-select>
-        </div>
-        <div class="elCtn">
-          <div class="filterLabel">下单公司：</div>
-          <el-cascader
-            @change="getOrderList"
-            placeholder="筛选下单公司"
-            v-model="client_id"
-            filterable
-            :options="clientList"
-            clearable
-          >
-          </el-cascader>
-        </div>
-      </div>
-      <div v-loading="loadingOrder" style="margin-top: 16px">
-        <div style="display: flex; color: #333333; justify-content: space-between">
-          <div style="font-weight: bolder; font-size: 16px; width: 25%">订单类型</div>
-          <div style="font-weight: bolder; font-size: 16px; width: 25%">订单号</div>
-          <div style="font-weight: bolder; font-size: 16px; width: 25%">下单公司</div>
-          <div style="font-weight: bolder; font-size: 16px; width: 25%">下单时间</div>
-        </div>
-        <div
-          style="display: flex; color: #333333; justify-content: space-between; padding: 8px"
-          v-for="(item, index) in orderList"
-          class="orderItem"
-          :key="index + 'orderList'"
-          @click="changeOrderCode(item)"
-        >
-          <div style="font-size: 16px; width: 25%">{{ item.order_type === 1 ? '订单' : '样单' }}</div>
-          <div style="font-size: 16px; width: 25%">{{ item.value }}</div>
-          <div style="font-size: 16px; width: 25%">{{ item.client_name }}</div>
-          <div style="font-size: 16px; width: 25%">{{ item.created_at }}</div>
-        </div>
-        <div class="listCtn" style="padding: 0">
-          <div class="pageCtn">
-            <el-pagination
-              background
-              :page-size="10"
-              layout="prev, pager, next, jumper"
-              :total="orderTotal"
-              :current-page.sync="orderPage"
-              @current-change="getOrderList"
-            >
-            </el-pagination>
-          </div>
-        </div>
-      </div>
-    </el-dialog>
-    <div class="popup" v-show="addOrder" v-loading="showPopupLoading" element-loading-target>
-      <div class="main">
-        <div class="titleCtn">
-          <span class="text">选择产品</span>
-          <div class="closeCtn">
-            <span class="el-icon-close" @click="closeAddOrder()"></span>
-          </div>
-        </div>
-        <div class="contentCtn log" style="padding-top: 15px; max-height: 700px">
-          <div class="filterCtn">
-            <div class="elCtn">
-              <div class="filterLabel">订单类型：</div>
-              <el-select
-                v-model="order_type"
-                style="width: 250px"
-                placeholder="请选择订单类型"
-                @change="openProductCode"
-              >
-                <el-option label="全部" :value="''"> </el-option>
-                <el-option label="订单" :value="1"> </el-option>
-                <el-option label="样单" :value="2"> </el-option>
-              </el-select>
-            </div>
-          </div>
-          <div class="editCtn packOrder">
-            <div class="tableCtn">
-              <div class="tbody hasTop">
-                <div class="trow">
-                  <div class="tcol bgGray">订单类型</div>
-                  <div class="tcol bgGray">订单号</div>
-                  <div class="tcol bgGray">产品编号</div>
-                  <div class="tcol bgGray">产品名称</div>
-                  <div class="tcol bgGray">产品描述</div>
-                  <div class="tcol bgGray">产品图片</div>
-                  <div class="tcol bgGray">尺码/颜色</div>
-                  <div class="tcol bgGray">尺寸/克重</div>
-                  <div class="tcol bgGray">计划生产数量</div>
-                  <div class="tcol bgGray">检验入库数量</div>
-                </div>
-                <div class="trow" v-for="(item, index) in productList" :key="index + 'productionScheduleUpdate'">
-                  <div class="tcol">{{ item.order_type == 1 ? '订单' : '样单' }}</div>
-                  <div class="tcol">{{ item.code }}</div>
-                  <div class="tcol noPad" style="flex: 9.8">
-                    <div class="trow" v-for="(itemPro, indexPro) in item.product_info" :key="indexPro + 'pro'">
-                      <div class="tcol">{{ itemPro.product_code }}<br />{{ itemPro.category }}</div>
-                      <div class="tcol">{{ itemPro.name }}</div>
-                      <div class="tcol">{{ contentHtml(itemPro.desc) }}</div>
-                      <div class="tcol">
-                        <el-image
-                          :src="
-                            itemPro.image_data.length > 0
-                              ? itemPro.image_data[0]
-                              : require('@/assets/image/common/noPic.png')
-                          "
-                          :preview-src-list="itemPro.image_data"
-                          fit="cover"
-                          style="width: 45px; height: 45px; padding: 10px 0"
-                        ></el-image>
-                      </div>
-                      <div class="tcol noPad" style="flex: 4.85; cursor: pointer">
-                        <div
-                          class="trow colorItem"
-                          v-for="(itemSizeColor, indexSizeColor) in itemPro.colorSizeInfo"
-                          @click="chooseColorSize(item, itemPro, itemSizeColor)"
-                          :key="itemSizeColor.size_id + 'color' + indexSizeColor"
-                        >
-                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">
-                            {{ (itemSizeColor.size_name || '无数据') + '/' + (itemSizeColor.color_name || '无数据') }}
-                          </div>
-                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">
-                            {{ (itemSizeColor.size_info || '无数据') + '/' + (itemSizeColor.weight || 0) }}
-                          </div>
-                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">
-                            {{ itemSizeColor.number }}
-                          </div>
-                          <div class="tcol" @click="itemSizeColor.check = !itemSizeColor.check">
-                            {{ itemSizeColor.inspection_number }}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div style="margin-bottom: 5px; margin-top: 5px; display: flex; justify-content: flex-end; padding-right: 25px">
-          <el-pagination
-            background
-            layout="prev, pager, next, jumper"
-            :total="productTotal"
-            :current-page.sync="productPage"
-            @current-change="openProductCode"
-          >
-          </el-pagination>
-        </div>
-      </div>
-    </div>
+      :originalData="originalSetting"></zh-list-setting>
   </div>
 </template>
 
@@ -1150,10 +1009,9 @@ export default Vue.extend({
     })
 
     this.department = Number(this.$getLocalStorage('department')) || ''
-    let processName = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
+    let processName: any = this.$getLocalStorage('process') ? this.$getLocalStorage('process').split(',') : []
     this.getProcessDesc(processName)
 
-    // @ts-ignore
     processName = processName.length > 0 ? [Number(processName[0]), processName[1]] : processName
     this.process = processName
     this.originalForm.process = this.process
