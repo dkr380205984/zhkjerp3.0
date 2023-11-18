@@ -979,6 +979,14 @@
                   </svg>
                   <span class="text">物料计划</span>
                 </div>
+                <div class="btn backHoverOrange"
+                  @click="shareCraft()">
+                  <svg class="iconFont"
+                    aria-hidden="true">
+                    <use xlink:href="#icon-dayindingdan"></use>
+                  </svg>
+                  <span class="text">分享工艺</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1472,6 +1480,27 @@ export default Vue.extend({
     }
   },
   methods: {
+    // 分享工艺单
+    shareCraft() {
+      craft
+        .share({
+          id: this.craftInfo.id
+        })
+        .then((res) => {
+          if (res.data.status) {
+            // @ts-ignore
+            this.$msgbox({
+              title: '分享工艺单',
+              message: this.$createElement(
+                'p',
+                { style: 'word-break: break-all' },
+                '复制下面代码粘贴到工艺单系统：' + res.data.data
+              ),
+              onfirmButtonText: '确定'
+            })
+          }
+        })
+    },
     getCraftList() {
       craft
         .parameterList({
@@ -4475,6 +4504,9 @@ export default Vue.extend({
 
 <style lang="less" scoped>
 @import '~@/assets/css/craft/detail.less';
+p {
+  word-break: break-all;
+}
 </style>
 <style lang="less">
 #craftDetail {

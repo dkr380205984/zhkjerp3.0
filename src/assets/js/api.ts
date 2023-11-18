@@ -458,6 +458,7 @@ const craft = {
   parameterCreate: (params: CraftParameter) => http.post(`${baseUrl}/yarn/imitate/save`, params, 'application/json'),
   parameterList: (params?: ListParams) => http.get(`${baseUrl}/yarn/imitate/lists`, params),
   parameterDelete: (params: DeleteParams) => http.post(`${baseUrl}/yarn/imitate/delete`, params, 'application/json'),
+  share: (params: any) => http.post(`${baseUrl}/craft/set/share/code`, params, 'application/json'),
 }
 
 // 单证设置
