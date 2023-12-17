@@ -93,7 +93,7 @@
                   <div class="tcol bgGray label">合计值</div>
                   <div class="tcol"
                     style="flex:2">
-                    {{numberAutoMethod(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0),1)}}{{item.childrenMergeInfo[0].unit}}
+                    {{numberAutoMethod(item.childrenMergeInfo.reduce((total,cur)=>total+numberAutoMethod(cur.final_number),0),1)}}{{item.childrenMergeInfo[0].unit}}
                   </div>
                 </div>
                 <div class="trow bgGray">
@@ -268,7 +268,7 @@
                   <div class="tcol bgGray label">合计值</div>
                   <div class="tcol"
                     style="flex:2">
-                    {{ numberAutoMethod(item.childrenMergeInfo.reduce((total,cur)=>total+Number(cur.final_number),0),1)}}{{item.childrenMergeInfo[0].unit}}
+                    {{ numberAutoMethod(item.childrenMergeInfo.reduce((total,cur)=>total+numberAutoMethod(cur.final_number),0),1)}}{{item.childrenMergeInfo[0].unit}}
                   </div>
                 </div>
                 <div class="trow bgGray">
