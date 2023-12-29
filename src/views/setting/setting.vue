@@ -5438,7 +5438,7 @@
                   v-model="item.client_id_arr"
                   :options="decorateMaterialClientList"
                   filterable
-                  @change="(ev) => {item.client_id = ev[2]}"
+                  @change="(ev) => {item.client_id = ev[2];delete item.client_name}"
                   :show-all-levels="false"></el-cascader>
                 <div class="blue"
                   v-if="item.client_name"
@@ -8344,6 +8344,13 @@ export default Vue.extend({
         this.getYarn(2)
         this.getYarnColor()
       } else if (this.cName === '装饰辅料') {
+        this.$checkCommonInfo([
+          {
+            checkWhich: 'api/clientType',
+            getInfoMethed: 'dispatch',
+            getInfoApi: 'getClientTypeAsync'
+          }
+        ])
         this.getDecorateMaterial()
       } else if (this.cName === '包装辅料') {
         this.getPackMaterial()
