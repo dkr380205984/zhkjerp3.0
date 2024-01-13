@@ -704,7 +704,7 @@
                   <div class="trow h32"
                     v-for="index in 7"
                     :key="index"
-                    :style="{'display':index!==6||ifShowWarpMerge3?'flex':'none'}">
+                    :style="{'display':index!==6||ifShowWeftMerge3?'flex':'none'}">
                     <template v-if="index===1||index===3">
                       <div class="tcol"
                         v-for="(itemChild,indexChild) in $sliceToArray(craftInfo.weft_data.weft_rank[index-1], 16)[indexFather]"
@@ -773,7 +773,7 @@
                   <div class="trow h32"
                     v-for="index in 7"
                     :key="index"
-                    :style="{'display':index!==6||ifShowWarpMerge3?'flex':'none'}">
+                    :style="{'display':index!==6||ifShowWeftMerge3?'flex':'none'}">
                     <template v-if="index===1||index===3">
                       <div class="tcol"
                         v-for="(itemChild,indexChild) in $sliceToArray(craftInfo.weft_data.weft_rank_back[index-1], 16)[indexFather]"
