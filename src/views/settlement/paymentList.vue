@@ -29,7 +29,6 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <!-- <el-input placeholder="搜索公司名称" v-model="keyword" @change="changeRouter"></el-input> -->
             <el-cascader placeholder="筛选下单公司"
               v-model="client_id"
               filterable
@@ -932,7 +931,10 @@ export default Vue.extend({
     // 由于列表需要用到type数据，所以这里不用checkCommonInfo
     clientType.list().then(res => {
       this.clientTypeList = res.data.data.filter((item: { type: string }) => Number(item.type) === Number(this.type))
-      this.clientList = res.data.data.map((item:any) => {
+      this.clientList = res.data.data.filter((item:any) => {
+        return item.type === '2'
+      }).map((item:any) => {
+        console.log(item)
         return {
           type: item.type,
           label: item.name,
