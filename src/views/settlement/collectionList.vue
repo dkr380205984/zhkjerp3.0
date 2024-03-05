@@ -26,9 +26,20 @@
       <div class="listCtn">
         <div class="filterCtn">
           <div class="elCtn">
-            <el-input placeholder="搜索公司名称"
+            <!-- <el-input placeholder="搜索公司名称"
               v-model="keyword"
-              @change="changeRouter"></el-input>
+              @change="changeRouter"></el-input> -->
+              <div class="elCtn">
+            <el-cascader placeholder="搜索公司名称"
+              v-model="client_id"
+              filterable
+              :props="{emitPath:false}"
+              :show-all-levels="false"
+              :options="clientList"
+              @change="changeRouter"
+              clearable>
+            </el-cascader>
+          </div>
           </div>
           <div class="elCtn">
             <el-select placeholder="筛选客户状态"
@@ -42,7 +53,7 @@
                 :value="0"></el-option>
             </el-select>
           </div>
-          <div class="elCtn">
+          <!-- <div class="elCtn">
             <el-select placeholder="客户类型筛选"
               v-model="clientType"
               @change="tag_id='';getClientTag($event)"
@@ -52,7 +63,7 @@
                 :value="item.id"
                 :label="item.name"></el-option>
             </el-select>
-          </div>
+          </div> -->
           <div class="elCtn">
             <el-date-picker v-model="year"
               @change="changeRouter"
@@ -60,21 +71,6 @@
               type="year"
               placeholder="选择年">
             </el-date-picker>
-          </div>
-          <div class="btn borderBtn"
-            @click="reset">重置</div>
-        </div>
-        <div class="filterCtn">
-          <div class="elCtn">
-            <el-select placeholder="客户标签筛选"
-              v-model="tag_id"
-              @change="changeRouter"
-              clearable>
-              <el-option v-for="item in clientTagList"
-                :key="item.value"
-                :value="item.value"
-                :label="item.label"></el-option>
-            </el-select>
           </div>
           <div class="elCtn">
             <el-select placeholder="筛选币种"
@@ -91,6 +87,21 @@
               </el-option>
             </el-select>
           </div>
+          <div class="btn borderBtn"
+            @click="reset">重置</div>
+        </div>
+        <div class="filterCtn">
+          <!-- <div class="elCtn">
+            <el-select placeholder="客户标签筛选"
+              v-model="tag_id"
+              @change="changeRouter"
+              clearable>
+              <el-option v-for="item in clientTagList"
+                :key="item.value"
+                :value="item.value"
+                :label="item.label"></el-option>
+            </el-select>
+          </div> -->
           <div class="elCtn">
             <el-select v-model="limit"
               placeholder="每页展示条数"
@@ -433,10 +444,12 @@ export default Vue.extend({
       type: 1, // 类型2，合作单位类型
       status: 1,
       clientType: '',
+      client_id: '',
       tag_id: '',
       bindFlag: false,
       clientTypeList: [],
       clientTagList: [],
+      clientList: [],
       limitList: limitArr,
       only_delete: 0,
       settle_unit: '',
@@ -699,11 +712,12 @@ export default Vue.extend({
           limit: this.limit,
           page: this.page,
           name: this.keyword,
+          client_id: this.client_id,
           status: this.status,
           only_delete: this.only_delete,
           settle_unit: this.settle_unit,
           tag_id: this.tag_id ? [this.tag_id] : null, // 筛选标签用的，暂时没用到
-          client_type_id: this.clientType ? [this.clientType] : this.clientTypeList.map((item: any) => item.id),
+          // client_type_id: this.clientType ? [this.clientType] : this.clientTypeList.map((item: any) => item.id),
           year: this.year
         })
         .then((res) => {
@@ -732,7 +746,8 @@ export default Vue.extend({
       this.tag_id = Number(query.tag_id) || ''
       this.status = query.status ? (query.status === 'null' ? null : Number(query.status)) : 1
       this.keyword = query.keyword || ''
-      this.clientType = Number(query.clientType) || ''
+      this.client_id = query.client_id || ''
+      // this.clientType = Number(query.clientType) || ''
       this.only_delete = Number(query.only_delete) || 0
       this.year = query.year || '' + new Date().getFullYear().toString()
       this.settle_unit = query.settle_unit || ''
@@ -754,10 +769,12 @@ export default Vue.extend({
           this.type +
           '&keyword=' +
           this.keyword +
+          '&client_id=' +
+          this.client_id +
           '&status=' +
           this.status +
-          '&clientType=' +
-          this.clientType +
+          // '&clientType=' +
+          // this.clientType +
           '&tag_id=' +
           this.tag_id +
           '&only_delete=' +
@@ -779,6 +796,7 @@ export default Vue.extend({
         .then(() => {
           this.status = 1
           this.clientType = ''
+          this.client_id = ''
           this.tag_id = ''
           this.only_delete = 0
           this.keyword = ''
@@ -796,6 +814,41 @@ export default Vue.extend({
     // 由于列表需要用到type数据，所以这里不用checkCommonInfo
     clientType.list().then((res) => {
       this.clientTypeList = res.data.data.filter((item: { type: string }) => Number(item.type) === Number(this.type))
+      this.clientList = res.data.data.filter((item:any) => {
+        return item.type === '1'
+      }).map((item:any) => {
+        console.log(item)
+        return {
+          type: item.type,
+          label: item.name,
+          value: item.id as number,
+          children: item.public_tag!.map((itemChild:any) => {
+            return {
+              type: 'public',
+              label: itemChild.name,
+              value: itemChild.id as number,
+              children: itemChild.rel_client!.map((itemClient:any) => {
+                return {
+                  label: itemClient.code ? (itemClient.code + '-' + itemClient.name) : itemClient.name,
+                  value: itemClient.id as number
+                }
+              })
+            }
+          }).concat(item.rel_tag!.map((itemChild:any) => {
+            return {
+              type: 'private',
+              label: itemChild.name,
+              value: itemChild.id as number,
+              children: itemChild.rel_client!.map((itemClient:any) => {
+                return {
+                  label: itemClient.code ? (itemClient.code + '-' + itemClient.name) : itemClient.name,
+                  value: itemClient.id as number
+                }
+              })
+            }
+          }))
+        }
+      })
       this.getFilters()
       this.getList()
     })
