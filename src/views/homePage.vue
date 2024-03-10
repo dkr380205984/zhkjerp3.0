@@ -104,6 +104,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.order.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '2'">
@@ -128,6 +132,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.sampleOrder.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '3'">
@@ -152,6 +160,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.quotedPrice.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '4'">
@@ -176,6 +188,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.craft.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '5'">
@@ -198,6 +214,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.materialPlan.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '6'">
@@ -220,6 +240,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.materialOrder.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '7'">
@@ -242,6 +266,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.decorateOrder.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '8'">
@@ -264,6 +292,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.materialStock.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '9'">
@@ -286,6 +318,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.materialProcess.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '10'">
@@ -308,6 +344,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.materialPush.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '12'">
@@ -330,6 +370,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.materialPop.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '13'">
@@ -352,6 +396,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.productionPlan.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '14'">
@@ -374,6 +422,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.packPlan.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '15'">
@@ -396,6 +448,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.packOrder.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '16'">
@@ -418,6 +474,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.packOut.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '17'">
@@ -440,6 +500,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.inspectionPush.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '18'">
@@ -462,6 +526,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.inspectionPop.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
           <div class="block"
             v-show="searchType === '0' || searchType === '19'">
@@ -484,6 +552,10 @@
             </div>
             <div class="noMsg"
               v-if="searchList.produtionPush.length === 0">暂无相关信息</div>
+            <div class="noMsg"
+              v-else>
+              仅显示前五条搜索数据
+            </div>
           </div>
         </div>
       </div>
