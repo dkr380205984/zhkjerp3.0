@@ -1117,9 +1117,10 @@
                     style="flex:2">纱线名称</div>
                   <div class="col">纱线类型</div>
                   <div class="col">参考报价</div>
-                  <div class="col">添加信息</div>
                   <div class="col"
-                    style="flex: 2">操作</div>
+                    style="flex: 1.5">更新信息</div>
+                  <div class="col"
+                    style="flex: 1.5">操作</div>
                 </div>
                 <div class="row"
                   v-for="item in yarnList1"
@@ -1128,9 +1129,10 @@
                     style="flex:2">{{ item.name }}</div>
                   <div class="col">{{ item.rel_type.join('/') }}</div>
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
-                  <div class="col">{{ item.user_name }}/{{ item.created_at }}</div>
                   <div class="col"
-                    style="flex: 2">
+                    style="flex: 1.5">{{ item.user_name }}/{{ item.updated_at }}</div>
+                  <div class="col"
+                    style="flex: 1.5">
                     <span class="opr hoverBlue">
                       <el-popover placement="bottom"
                         title="报价详情"
@@ -1209,9 +1211,10 @@
                     style="flex:2">面料名称</div>
                   <div class="col">面料类型</div>
                   <div class="col">参考报价</div>
-                  <div class="col">添加信息</div>
                   <div class="col"
-                    style="flex: 2">操作</div>
+                    style="flex: 1.5">更新信息</div>
+                  <div class="col"
+                    style="flex: 1.5">操作</div>
                 </div>
                 <div class="row"
                   v-for="item in yarnList2"
@@ -1220,9 +1223,10 @@
                     style="flex:2">{{ item.name }}</div>
                   <div class="col">{{ item.rel_type.join('/') }}</div>
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
-                  <div class="col">{{ item.user_name }}/{{ item.created_at }}</div>
                   <div class="col"
-                    style="flex: 2">
+                    style="flex: 1.5">{{ item.user_name }}/{{ item.updated_at }}</div>
+                  <div class="col"
+                    style="flex: 1.5">
                     <span class="opr hoverBlue">
                       <el-popover placement="bottom"
                         title="报价详情"
@@ -1338,8 +1342,8 @@
                   <div class="col">辅料名称</div>
                   <div class="col">计量单位</div>
                   <div class="col">参考报价</div>
-                  <div class="col">添加人</div>
-                  <div class="col">添加时间</div>
+                  <div class="col">更新人</div>
+                  <div class="col">更新时间</div>
                   <div class="col">操作</div>
                 </div>
                 <div class="row"
@@ -1349,7 +1353,7 @@
                   <div class="col">{{ item.unit }}</div>
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
                   <div class="col">{{ item.user_name }}</div>
-                  <div class="col">{{ item.created_at }}</div>
+                  <div class="col">{{ item.updated_at }}</div>
                   <div class="col">
                     <span class="opr hoverOrange"
                       @click="
@@ -1393,8 +1397,8 @@
                   <div class="col">计量单位</div>
                   <div class="col">计价方式</div>
                   <div class="col">参考报价</div>
-                  <div class="col">添加人</div>
-                  <div class="col">添加时间</div>
+                  <div class="col">更新人</div>
+                  <div class="col">更新时间</div>
                   <div class="col">操作</div>
                 </div>
                 <div class="row"
@@ -1405,7 +1409,7 @@
                   <div class="col">{{ item.calc_type | packCalcFilter }}</div>
                   <div class="col">{{ item.rel_price | filterPrice }}</div>
                   <div class="col">{{ item.user_name }}</div>
-                  <div class="col">{{ item.created_at }}</div>
+                  <div class="col">{{ item.updated_at }}</div>
                   <div class="col">
                     <span class="opr hoverOrange"
                       @click="updatePackMaterial(item)">修改</span>
@@ -1450,15 +1454,15 @@
                     <div class="trow">
                       <div class="tcol">报价单位</div>
                       <div class="tcol noPad"
-                        style="flex: 5">
+                        style="flex: 4">
                         <div class="trow">
                           <div class="tcol">纱线名称</div>
-                          <div class="tcol">纱线颜色</div>
-                          <div class="tcol">纱线属性</div>
+                          <div class="tcol">颜色/属性</div>
                           <div class="tcol">报价</div>
                           <div class="tcol">备注</div>
                         </div>
                       </div>
+                      <div class="tcol">更新时间</div>
                       <div class="tcol">操作</div>
                     </div>
                   </div>
@@ -1468,17 +1472,21 @@
                       :key="item.id">
                       <div class="tcol">{{ item.client_name }}</div>
                       <div class="tcol noPad"
-                        style="flex: 5">
+                        style="flex: 4">
                         <div class="trow"
                           v-for="(itemChild, indexChild) in item.info_data"
                           :key="indexChild">
                           <div class="tcol">{{ itemChild.material_name }}</div>
-                          <div class="tcol">{{ itemChild.material_color }}</div>
-                          <div class="tcol">{{ itemChild.attribute }}</div>
+                          <div class="tcol">
+                            <div> {{ itemChild.material_color }}</div>
+                            <div> {{ itemChild.attribute }}</div>
+
+                          </div>
                           <div class="tcol">{{ itemChild.price }}元/kg</div>
                           <div class="tcol">{{ itemChild.desc }}</div>
                         </div>
                       </div>
+                      <div class="tcol">{{item.updated_at}}</div>
                       <div class="tcol oprCtn">
                         <span class="opr hoverOrange"
                           @click="
@@ -1528,7 +1536,7 @@
                     <div class="trow">
                       <div class="tcol">报价单位</div>
                       <div class="tcol noPad"
-                        style="flex: 5">
+                        style="flex: 4">
                         <div class="trow">
                           <div class="tcol">面料名称</div>
                           <div class="tcol">面料颜色</div>
@@ -1536,6 +1544,7 @@
                           <div class="tcol">备注</div>
                         </div>
                       </div>
+                      <div class="tcol">更新时间</div>
                       <div class="tcol">操作</div>
                     </div>
                   </div>
@@ -1545,7 +1554,7 @@
                       :key="item.id">
                       <div class="tcol">{{ item.client_name }}</div>
                       <div class="tcol noPad"
-                        style="flex: 5">
+                        style="flex: 4">
                         <div class="trow"
                           v-for="(itemChild, indexChild) in item.info_data"
                           :key="indexChild">
@@ -1555,6 +1564,7 @@
                           <div class="tcol">{{ itemChild.desc }}</div>
                         </div>
                       </div>
+                      <div class="tcol">{{ item.updated_at }}</div>
                       <div class="tcol oprCtn">
                         <span class="opr hoverOrange"
                           @click="
@@ -2977,7 +2987,7 @@
                   </div>
                 </div>
                 <div class="row"
-                  v-for="(item, index) in materialProcessCheckConfig.data.beyond_price_notice_user"
+                  v-for="(item, index) in materialProcessCheckConfig.data.beyond_notice_user"
                   :key="index + 'jiage'">
                   <div class="col">
                     <div class="label"
@@ -3005,7 +3015,7 @@
                     style="top: -71px"
                     v-if="index === 0"
                     @click="
-                      $addItem(materialProcessCheckConfig.data.beyond_price_notice_user, {
+                      $addItem(materialProcessCheckConfig.data.beyond_notice_user, {
                         user_id: '',
                         notice_for_wechat: '2'
                       })
@@ -3013,7 +3023,7 @@
                   <span class="opr hoverRed"
                     style="top: -71px"
                     v-if="index > 0"
-                    @click="$deleteItem(materialProcessCheckConfig.data.beyond_price_notice_user, index)">删除</span>
+                    @click="$deleteItem(materialProcessCheckConfig.data.beyond_notice_user, index)">删除</span>
                 </div>
               </template>
               <div class="btnCtn fr"
@@ -3570,6 +3580,17 @@
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">异常且未审核通过的单据是否允许打印</div>
+                  <div class="info middle">
+                    <el-radio v-model="productionPlanCheckConfig.data.beyond_price_can_print"
+                      :label="1">允许</el-radio>
+                    <el-radio v-model="productionPlanCheckConfig.data.beyond_price_can_print"
+                      :label="2">不允许</el-radio>
+                  </div>
+                </div>
+              </div>
               <template v-if="productionPlanCheckConfig.data.beyond_price_notice_condition !== 2">
                 <div class="row">
                   <div class="col">
@@ -3658,6 +3679,17 @@
                       :label="1">通知</el-radio>
                     <el-radio v-model="productionPlanCheckConfig.data.beyond_notice_condition"
                       :label="2">不通知</el-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="label">异常且未审核通过的单据是否允许打印</div>
+                  <div class="info middle">
+                    <el-radio v-model="productionPlanCheckConfig.data.beyond_notice_can_print"
+                      :label="1">允许</el-radio>
+                    <el-radio v-model="productionPlanCheckConfig.data.beyond_notice_can_print"
+                      :label="2">不允许</el-radio>
                   </div>
                 </div>
               </div>
@@ -5406,9 +5438,9 @@
         <div class="main"
           style="width:920px">
           <div class="titleCtn">
-            <div class="text">新增辅料</div>
+            <div class="text">{{decorateMaterialInfo.id?'修改':'新增'}}辅料</div>
             <div class="closeCtn"
-              @click="showPopup = false">
+              @click="showPopup = false;resetDecorateMaterial()">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -5481,7 +5513,7 @@
           <div class="titleCtn">
             <div class="text">新增辅料</div>
             <div class="closeCtn"
-              @click="showPopup = false">
+              @click="showPopup = false;resetPackMaterial()">
               <i class="el-icon-close"></i>
             </div>
           </div>
@@ -8458,6 +8490,7 @@ export default Vue.extend({
                   data: res.data.data,
                   doc_type: 3
                 }
+                console.log(this.materialProcessCheckConfig)
               }
             })
         } else if (this.cName === '原料调取单') {
@@ -10709,7 +10742,7 @@ export default Vue.extend({
       if (!formCheck) {
         packMaterial.create(this.packMaterialInfo).then((res) => {
           if (res.data.status) {
-            this.$message.success('添加成功')
+            this.$message.success('操作成功')
             this.resetPackMaterial()
             this.getPackMaterial()
           }

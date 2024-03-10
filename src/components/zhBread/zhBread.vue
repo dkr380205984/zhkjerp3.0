@@ -1,9 +1,9 @@
 <template>
   <div class="zh-bread">
     <div class="zh-bread-once"
-      :class="{'active':activeUrl==='首页'}">
+      :class="{'active':activeUrl==='主页'}">
       <div class="zh-bread-label"
-        @click="$router.push('/index')">首页</div>
+        @click="$router.push('/homePage')">首页</div>
     </div>
     <div class="zh-bread-once"
       :class="{'active':activeUrl===item.name}"

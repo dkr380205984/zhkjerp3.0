@@ -18,7 +18,7 @@ const statusState: State = {
 
 const statusMutations = {
   getRoute(state: State, route: BreadUrl) {
-    if (route.name !== '首页' && route.name !== 'login') {
+    if (route.name !== '主页' && route.name !== '登录') {
       let finded = state.breadUrl.find((item) => {
         return item.name === route.name
       })

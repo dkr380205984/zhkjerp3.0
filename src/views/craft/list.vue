@@ -22,8 +22,12 @@
               placeholder="筛选纱线名称"
               @keydown.enter.native="changeRouter"></el-input>
           </div>
-          <div class="btn fr borderBtn"
-            @click="reset">重置</div>
+          <div class="elCtn"
+            style="width:225px">
+            <el-checkbox v-model="not_rel_product"
+              @change="changeRouter"
+              :true-label="1">筛选未绑定产品的工艺单</el-checkbox>
+          </div>
           <div class="btn backHoverBlue fr"
             @click="$router.push('/craft/create')">添加工艺单</div>
         </div>
@@ -70,6 +74,8 @@
                 :value="item.value"></el-option>
             </el-select>
           </div>
+          <div class="btn fr borderBtn"
+            @click="reset">重置</div>
         </div>
         <zh-list :list="list"
           :listKey="listKey"
@@ -123,6 +129,7 @@ export default Vue.extend({
       limit: 10,
       total: 1,
       page: 1,
+      not_rel_product: 0,
       showSetting: false,
       listSettingId: null,
       listKey: [],
@@ -298,6 +305,7 @@ export default Vue.extend({
       this.user_id = query.user_id || ''
       this.date = query.date ? (query.date as string).split(',') : []
       this.limit = Number(query.limit) || 10
+      this.not_rel_product = Number(query.not_rel_product) || 0
       this.name = query.name || ''
     },
     changeRouter(ev?: any) {
@@ -320,7 +328,9 @@ export default Vue.extend({
           '&limit=' +
           this.limit +
           '&name=' +
-          this.name
+          this.name +
+          '&not_rel_product=' +
+          this.not_rel_product
       )
     },
     reset() {
@@ -338,6 +348,7 @@ export default Vue.extend({
           this.name = ''
           this.date = []
           this.status = 'null'
+          this.not_rel_product = 0
           this.limit = 5
           this.changeRouter()
         })
@@ -360,7 +371,8 @@ export default Vue.extend({
           product_code: this.product_code,
           yarn_name: this.yarn_name,
           limit: this.limit,
-          title: this.name
+          title: this.name,
+          not_rel_product: this.not_rel_product
         })
         .then((res) => {
           if (res.data.status) {
