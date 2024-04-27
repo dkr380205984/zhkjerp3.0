@@ -298,7 +298,7 @@ export default Vue.extend({
       if (!formCheck) {
         this.saveLock = true
         this.paymentInfo.data.forEach((item) => {
-          item.price = item.price.replace(/[^0-9]/gi, '')
+          item.price = item.price.replace(/[^\d.]/g, '')
         })
         payment.create(this.paymentInfo).then((res) => {
           if (res.data.status) {

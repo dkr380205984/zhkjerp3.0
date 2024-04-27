@@ -231,7 +231,7 @@
                   <div class="otherInfoCtn">
                     <div class="otherInfo">
                       <div class="btn backHoverBlue"
-                        @click.stop="$openUrl('/productionPlan/print?id='+item.id+'&order_id='+$route.query.id)">
+                        @click.stop="printFunction(item)">
                         <svg class="iconFont"
                           aria-hidden="true">
                           <use xlink:href="#icon-xiugaidingdan"></use>
@@ -4005,6 +4005,18 @@ export default Vue.extend({
           this.materialPlanDetail = res.data.data
           this.loading = false
         })
+    },
+    // 打印要做判断，烦的一笔
+    printFunction(item: any) {
+      if (Number(item.is_check) === 5 && Number(this.$getsessionStorage('beyond_price_can_print')) === 2) {
+        this.$message.warning('超额异常需要审核通过后才能打印')
+        return
+      }
+      if (Number(item.is_check) === 4 && Number(this.$getsessionStorage('beyond_notice_can_print')) === 2) {
+        this.$message.warning('单据异常需要审核通过后才能打印')
+        return
+      }
+      this.$openUrl('/productionPlan/print?id=' + item.id + '&order_id=' + this.$route.query.id)
     }
   },
   mounted() {

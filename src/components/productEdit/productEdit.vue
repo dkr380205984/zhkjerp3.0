@@ -1545,6 +1545,22 @@ export default Vue.extend({
                   })
                 })
               })
+              this.productStockInfo.info_data = this.sizeColorList.map((item: any) => {
+                return {
+                  product_code: proInfo.product_code,
+                  name: proInfo.name,
+                  category: '',
+                  secondary_category: '',
+                  product_id: proInfo.id as number,
+                  size_id: '',
+                  color_id: '',
+                  price: '',
+                  size_name: '',
+                  color_name: '',
+                  color_size: item.value,
+                  number: ''
+                }
+              })
               this.step = 2
             } else {
               if (this.afterSaveClear) {

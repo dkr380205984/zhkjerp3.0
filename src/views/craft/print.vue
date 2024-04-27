@@ -1781,7 +1781,10 @@ export default Vue.extend({
       }
     },
     computedNumber(type: 'warp' | 'weft' | 'warpBack' | 'weftBack', row: number, start: number, end: number): number {
-      console.log(row, start, end)
+      if (type === 'weftBack') {
+        console.log(start, end)
+      }
+      console.log(this.flattenInfo)
       const arr = ['', '', '', 'firstArr', 'secondArr', 'thirdArr']
       return this.flattenInfo[type][arr[row]]
         .filter((item: any) => item.order > start && item.order <= end)
@@ -1900,7 +1903,7 @@ export default Vue.extend({
               this.craftInfo.weft_data.merge_data as MergeDataInfo[]
             ),
             weftBack: this.getFlatTable(
-              this.craftInfo.weft_data.weft_rank,
+              this.craftInfo.weft_data.weft_rank_back,
               this.craftInfo.weft_data.merge_data_back as MergeDataInfo[]
             )
           }

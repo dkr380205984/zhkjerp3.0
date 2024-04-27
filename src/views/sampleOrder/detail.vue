@@ -1378,7 +1378,7 @@
                         style="flex:0.8">
                         <div class="elCtn">
                           <el-input :ref="'number'+ '-'+index+'-'+indexChild"
-                            :class="{'error':mustFlag&&!itemChild.number}"
+                            :class="{'error':!itemChild.number}"
                             v-model="itemChild.number"
                             placeholder="打样数量"
                             @keydown.native="$focusByKeydown($event,'number',[index,indexChild],sampleOrderInfo.time_data.batch_data[0],['product_data','product_info'])">

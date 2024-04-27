@@ -62,7 +62,7 @@
               <div class="tcol bgGray label">分配总数</div>
               <div class="tcol">{{totalNumber}}</div>
               <div class="tcol bgGray label">分配总额</div>
-              <div class="tcol">{{totalPrice}}元</div>
+              <div class="tcol">{{showPrice?totalPrice:'***'}}元</div>
               <div class="tcol bgGray label">工序说明</div>
               <div class="tcol"
                 style="min-width:369px">{{productionPlanInfo.process_desc}}</div>
@@ -113,7 +113,7 @@
                 <span>{{itemPro.size_info}}</span>
                 <span>{{itemPro.weight||0}}g</span>
               </div>
-              <div class="tcol">{{itemPro.price}}元</div>
+              <div class="tcol">{{showPrice?itemPro.price:'***'}}元</div>
               <div class="tcol">{{$toFixed(itemPro.number,0,true)}}</div>
             </div>
           </div>
@@ -154,7 +154,7 @@
               </div>
               <div class="tcol bgGray headTitle">额外费用金额</div>
               <div class="tcol">
-                {{item.price}}元
+                {{showPrice?item.price:'***'}}元
               </div>
               <div class="tcol bgGray headTitle">额外费用备注</div>
               <div class="tcol">
@@ -222,6 +222,8 @@
         @click="windowMethod(4)">{{showClient?'不显示':'显示'}}下单客户</div>
       <div class="setting_item"
         @click="windowMethod(5)">{{showProductClient?'不显示':'显示'}}生产单位</div>
+      <div class="setting_item"
+        @click="windowMethod(6)">{{showPrice?'不显示':'显示'}}价格</div>
     </div>
   </div>
 </template>
@@ -240,6 +242,7 @@ export default Vue.extend({
       showMenu: false,
       showClient: true,
       showProductClient: true,
+      showPrice: true,
       user_name: window.sessionStorage.getItem('user_name'),
       company_name: window.sessionStorage.getItem('company_name'),
       qrCodePCUrl: '',
@@ -341,6 +344,9 @@ export default Vue.extend({
         } else if (type === 5) {
           this.showProductClient = !this.showProductClient
           this.$setLocalStorage('productionPlanPrintClientShow', this.showProductClient)
+        } else if (type === 6) {
+          this.showPrice = !this.showPrice
+          this.$setLocalStorage('productionPlanPrintPriceShow', this.showPrice)
         }
       })
     },
@@ -375,6 +381,7 @@ export default Vue.extend({
   mounted() {
     this.showClient = this.$getLocalStorage('productionPlanPrintShow') || true
     this.showProductClient = this.$getLocalStorage('productionPlanPrintClientShow') || true
+    this.showPrice = this.$getLocalStorage('productionPlanPrintPriceShow') || true
     this.title = this.$getLocalStorage('productionPlanPrintTitle') || ''
     this.descArr = this.$getLocalStorage('productionPlanPrintDesc')
       ? JSON.parse(this.$getLocalStorage('productionPlanPrintDesc'))

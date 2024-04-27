@@ -1711,6 +1711,7 @@ export default Vue.extend({
       })
       const index = Number(this.quotedPriceInfo.product_data.length - 1)
       this.$nextTick(() => {
+        console.log('add')
         this.$initEditor(this.quotedPriceInfo.product_data[index], index)
       })
     },
@@ -2463,9 +2464,9 @@ export default Vue.extend({
                   ]
                 }
               })
+            console.log(this.quotedPriceInfo.product_data)
             // 如果是订单产品转报价，过滤掉其他产品
             if (this.$route.query.product_id) {
-              this.quotedPriceInfo
               this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.filter(
                 (item) => Number(item.product_id) === Number(this.$route.query.product_id)
               )
@@ -2473,15 +2474,14 @@ export default Vue.extend({
             // 把编辑器补上
             this.$nextTick(() => {
               this.quotedPriceInfo.product_data.forEach((item, index) => {
-                if (index > 0) {
-                  this.$initEditor(item, index)
-                }
+                this.$initEditor(item, index)
               })
             })
           }
           this.loading = false
         })
     }
+
     // 订单转报价单逻辑
     if (this.$route.query.orderId) {
       this.loading = true
@@ -2614,7 +2614,6 @@ export default Vue.extend({
             })
             // 如果是订单产品转报价，过滤掉其他产品
             if (this.$route.query.product_id) {
-              this.quotedPriceInfo
               this.quotedPriceInfo.product_data = this.quotedPriceInfo.product_data.filter(
                 (item) => Number(item.product_id) === Number(this.$route.query.product_id)
               )
@@ -2622,9 +2621,7 @@ export default Vue.extend({
             // 把编辑器补上
             this.$nextTick(() => {
               this.quotedPriceInfo.product_data.forEach((item, index) => {
-                if (index > 0) {
-                  this.$initEditor(item, index)
-                }
+                this.$initEditor(item, index)
               })
             })
           }
@@ -2633,7 +2630,12 @@ export default Vue.extend({
     }
 
     // 初始化编辑器
-    if (this.quotedPriceInfo.product_data.length === 0 && !this.$route.query.id) {
+    if (
+      this.quotedPriceInfo.product_data.length === 0 &&
+      !this.$route.query.id &&
+      !this.$route.query.sampleOrderId &&
+      !this.$route.query.orderId
+    ) {
       this.addPro()
     }
   },

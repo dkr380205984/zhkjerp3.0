@@ -5,7 +5,8 @@
     <order-detail :data="orderInfo"></order-detail>
     <div class="module clearfix">
       <div class="titleCtn">
-        <div class="title">物料采购单入库<el-checkbox v-model="showLessOrder"
+        <div class="title">物料采购单入库
+          <el-checkbox v-model="showLessOrder "
             @change="init()"
             style="margin-left:12px;float:right">仅显示待入库原料</el-checkbox>
         </div>
@@ -314,9 +315,11 @@
         <div class="btn backHoverBlue"
           :class="{
             backGray:
-              materialOrderList.filter((item) => {
+              materialShaXianList.filter((item) => {
                 return item.info_data.some((itemChild) => itemChild.check)
-              }).length === 0
+              }).length === 0 && materialShaXianList.filter((item) => {
+                return item.info_data.some((itemChild) => itemChild.check)
+              }).length === 0 
           }"
           @click="goStock(4)">
           <svg class="iconFont"
@@ -1612,6 +1615,7 @@ export default Vue.extend({
           // console.log(item.id)
           shaXianObj.info_data = []
           maoTiaoObj.info_data = []
+          // 金丝银丝到这一步没有yarn_type，不会出现在这里，备注一下免得以后忘了
           item.info_data.forEach((itemInfo: any) => {
             if (itemInfo.yarn_type === 1 && shaXianObj.info_data[0] !== undefined) {
               shaXianObj.info_data.push(this.$clone(itemInfo))
