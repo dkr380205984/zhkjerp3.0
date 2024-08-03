@@ -104,7 +104,19 @@
             v-for="item in list"
             :key="item.id">
             <div class="col">{{item.code}}</div>
-            <div class="col">{{item.order_code?item.order_code.join(','):'无'}}</div>
+            <div class="col">
+              <template v-if="!item.order_info||item.order_info.length===0">
+                <span class="gray">无单据</span>
+              </template>
+              <template v-else>
+                <span style="cursor: pointer"
+                  v-for="itemChild in item.order_info"
+                  :key="itemChild.order_id"
+                  :class="{ blue: itemChild.order_code, gray: !itemChild.order_code}"
+                  @click="$openUrl('/order/detail?id=' + itemChild.order_id)">
+                  {{ itemChild.order_code }}</span>
+              </template>
+            </div>
             <div class="col">{{item.client_name}}</div>
             <div class="col">{{item.city}}</div>
             <div class="col">{{item.total_box}}</div>

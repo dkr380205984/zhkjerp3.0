@@ -218,10 +218,11 @@ export default Vue.extend({
               this.changeNumToPrice(Number(item.price).toString(), index)
             })
           } else {
+            console.log(this.data)
             this.paymentInfo.data = this.data.map((item: any) => {
               return {
                 id: this.update ? item.id : '',
-                doc_code: this.update ? item.code : item.code,
+                doc_code: this.update ? item.doc_code : item.code,
                 rel_doc_id: this.update ? item.rel_doc_id : item.id,
                 order_id: this.update ? item.order_id : this.type === 1 ? item.id : item.top_order_id,
                 price: this.update ? item.price : '',

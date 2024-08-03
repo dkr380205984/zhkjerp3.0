@@ -3907,7 +3907,8 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="backHoverBlue btn">搜索</div>
+          <div class="backHoverBlue btn"
+            @click="getDeductLogList">搜索</div>
         </div>
         <div class="list">
           <div class="row title">
@@ -4013,7 +4014,8 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="backHoverBlue btn">搜索</div>
+          <div class="backHoverBlue btn"
+            @click="getPaymentLogList">搜索</div>
         </div>
         <div class="filterCtn clearfix"></div>
         <div class="list">
@@ -4034,7 +4036,7 @@
             <div class="col">{{ $toFixed(item.price, 3, true) }}元</div>
             <div class="col">{{ item.desc }}</div>
             <div class="col">{{ item.user_name }}</div>
-            <div class="col">{{ item.created_at }}</div>
+            <div class="col">{{ item.complete_time }}</div>
             <div class="col oprCtn">
               <span class="opr orange"
                 @click="goPayment([item], true)">修改</span>
@@ -4105,7 +4107,8 @@
               value-format="yyyy-MM-dd">
             </el-date-picker>
           </div>
-          <div class="backHoverBlue btn">搜索</div>
+          <div class="backHoverBlue btn"
+            @click="getInvoiceLogList">搜索</div>
         </div>
         <div class="filterCtn clearfix">
           <div class="elCtn">

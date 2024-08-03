@@ -4,8 +4,8 @@ if (process.env.NODE_ENV === 'production') {
   TARGET = 'https://knit.zwyknit.com'
 } else {
   // 测试环境
-  TARGET = 'https://knit.zwyknit.com'
-  // TARGET = 'https://knit-m-beta.zwyknit.com'
+  // TARGET = 'https://knit.zwyknit.com'
+  TARGET = 'https://knit-m-beta.zwyknit.com'
 }
 module.exports = {
   devServer: {

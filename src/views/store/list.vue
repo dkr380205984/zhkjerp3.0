@@ -533,6 +533,13 @@
                   :value="item.value"></el-option>
               </el-select>
             </div>
+            <!-- <el-tooltip class="item"
+              effect="dark"
+              content="不选仓库则导出所有仓库"
+              placement="top">
+              <i class="el-icon-question hoverOrange"
+                style="line-height:32px;margin-left:12px"></i>
+            </el-tooltip> -->
           </div>
           <div class="row">
             <div class="label"
@@ -621,6 +628,13 @@
                   :value="item.value"></el-option>
               </el-select>
             </div>
+            <el-tooltip class="item"
+              effect="dark"
+              content="不选仓库则导出所有仓库"
+              placement="top">
+              <i class="el-icon-question hoverOrange"
+                style="line-height:32px;margin-left:12px"></i>
+            </el-tooltip>
           </div>
           <div class="row">
             <div class="label"
@@ -634,6 +648,13 @@
                 clearable>
               </el-cascader>
             </div>
+            <el-tooltip class="item"
+              effect="dark"
+              content="不选物料则导出所有物料"
+              placement="top">
+              <i class="el-icon-question hoverOrange"
+                style="line-height:32px;margin-left:12px"></i>
+            </el-tooltip>
           </div>
           <!-- <div class="row">
             <div class="label"
@@ -1550,6 +1571,7 @@ export default Vue.extend({
       })
     },
     exportMaterialTotalExcel() {
+      this.materialTotalExcel.store_type = Number(this.$route.query.store_type)
       this.materialTotalExcel.material_type = Number(this.$route.query.store_type) === 4 ? 2 : 1
       exportExcel.materialTotal(this.materialTotalExcel).then((res) => {
         if (res.data.status) {

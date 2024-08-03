@@ -61,7 +61,7 @@
             <div class="trow">
               <div class="tcol bgGray label">分配总数</div>
               <div class="tcol">{{totalNumber}}</div>
-              <div class="tcol bgGray label">分配总额</div>
+              <div class="tcol bgGray label">合计总额</div>
               <div class="tcol">{{showPrice?totalPrice:'***'}}元</div>
               <div class="tcol bgGray label">工序说明</div>
               <div class="tcol"
@@ -302,7 +302,10 @@ export default Vue.extend({
       return this.$toFixed(
         this.productionPlanInfo.product_info_data.reduce((total, item) => {
           return total + Number(this.$toFixed(Number(item.price) * Number(item.number)))
-        }, 0),
+        }, 0) +
+          this.productionPlanInfo.others_fee_data.reduce((total, item) => {
+            return total + Number(item.price || 0)
+          }, 0),
         3,
         true
       )
