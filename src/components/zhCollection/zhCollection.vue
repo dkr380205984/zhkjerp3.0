@@ -54,7 +54,8 @@
           <div class="row">
             <div class="info">
               <el-date-picker placeholder="收款日期"
-                v-model="item.complete_time">
+                v-model="item.complete_time"
+                value-format="yyyy-MM-dd">
                 <template slot="prepend">收款日期</template>
               </el-date-picker>
             </div>

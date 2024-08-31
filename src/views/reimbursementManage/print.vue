@@ -1,5 +1,8 @@
 <template>
-  <div class="printContainer" id="reimbursementManagePrint" @click="showMenu = false" @click.right="handleClickRight">
+  <div class="printContainer"
+    id="reimbursementManagePrint"
+    @click="showMenu = false"
+    @click.right="handleClickRight">
     <div class="pmain">
       <div class="phead clearfix">
         <div class="fl">
@@ -7,7 +10,8 @@
           <div class="prow">
             <div class="pcol wa">
               <div class="label">报销单号：</div>
-              <div class="info" style="white-space: nowrap">{{ receiptInfo.code }}</div>
+              <div class="info"
+                style="white-space: nowrap">{{ receiptInfo.code }}</div>
             </div>
           </div>
           <div class="prow">
@@ -24,49 +28,69 @@
         <div class="fr">
           <!-- <div class="remark">打开微信扫一扫 更新每日生产进度</div> -->
           <div class="pImage">
-            <img :src="receiptInfo.url" width="100%" alt="" />
+            <img :src="receiptInfo.url"
+              width="100%"
+              alt="" />
           </div>
         </div>
       </div>
       <div class="pbody">
         <div class="tableCtn pageOne">
           <div class="module">
-            <div class="tbody hasTop" style="text-align: left">
+            <div class="tbody hasTop"
+              style="text-align: left">
               <div class="trow">
                 <div class="tcol bgGray">报销人</div>
                 <div class="tcol">{{ receiptInfo.name }}</div>
                 <div class="tcol bgGray">审核人</div>
-                <div class="tcol">{{ receiptInfo.reviewer.name }}</div>
+                <div class="tcol">{{ receiptInfo.check_user.join(',') }}</div>
               </div>
-              <div class="trow" v-for="(item, index) in receiptInfo.receipt_contents" :key="index">
+              <div class="trow"
+                v-for="(item, index) in receiptInfo.receipt_contents"
+                :key="index">
                 <div class="tcol noPad">
                   <div class="trow">
-                    <div class="tcol bgGray" style="flex: 0.349">报销内容{{ index + 1 }}</div>
-                    <div class="tcol" style="flex: 1.5">{{ item.name }}</div>
+                    <div class="tcol bgGray"
+                      style="flex: 0.349">报销内容{{ index + 1 }}</div>
+                    <div class="tcol"
+                      style="flex: 1.5">{{ item.name }}</div>
                   </div>
                   <div class="trow">
-                    <div class="tcol bgGray" style="flex: 0.349">申请报销金额（元）</div>
-                    <div class="tcol" style="flex: 1.5">{{ item.amount }}</div>
+                    <div class="tcol bgGray"
+                      style="flex: 0.349">申请报销金额（元）</div>
+                    <div class="tcol"
+                      style="flex: 1.5">{{ item.amount }}</div>
                   </div>
                 </div>
               </div>
               <div class="trow">
-                <div class="tcol bgGray" style="flex: 0.349">合计</div>
-                <div class="tcol" style="flex: 1.5">{{ receiptInfo.amount }} 元</div>
+                <div class="tcol bgGray"
+                  style="flex: 0.349">合计</div>
+                <div class="tcol"
+                  style="flex: 1.5">{{ receiptInfo.amount }} 元</div>
               </div>
             </div>
             <span v-if="receiptInfo.certificate">
-              <div v-for="(item, index) in receiptInfo.certificate.split(',')" :key="item + index" class="elImageCtn">
-                <el-image style="width: 100px; height: 100px" :src="item" fit="content"></el-image>
+              <div v-for="(item, index) in receiptInfo.certificate.split(',')"
+                :key="item + index"
+                class="elImageCtn">
+                <el-image style="width: 100px; height: 100px"
+                  :src="item"
+                  fit="content"></el-image>
               </div>
             </span>
           </div>
         </div>
       </div>
     </div>
-    <div class="setting_sign_style" v-if="showMenu" :style="`left:${X_position || 0}px;top:${Y_position}px`" @click.stop>
-      <div class="setting_item" @click="windowMethod(1)">刷新</div>
-      <div class="setting_item" @click="windowMethod(2)">打印</div>
+    <div class="setting_sign_style"
+      v-if="showMenu"
+      :style="`left:${X_position || 0}px;top:${Y_position}px`"
+      @click.stop>
+      <div class="setting_item"
+        @click="windowMethod(1)">刷新</div>
+      <div class="setting_item"
+        @click="windowMethod(2)">打印</div>
     </div>
   </div>
 </template>
