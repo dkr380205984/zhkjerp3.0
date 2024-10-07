@@ -43,7 +43,7 @@
                 <div class="tcol bgGray">报销人</div>
                 <div class="tcol">{{ receiptInfo.name }}</div>
                 <div class="tcol bgGray">审核人</div>
-                <div class="tcol">{{ receiptInfo.check_user.join(',') }}</div>
+                <div class="tcol">{{  receiptInfo.check_user?receiptInfo.check_user.join(',') :''}}</div>
               </div>
               <div class="trow"
                 v-for="(item, index) in receiptInfo.receipt_contents"
@@ -74,8 +74,8 @@
               <div v-for="(item, index) in receiptInfo.certificate.split(',')"
                 :key="item + index"
                 class="elImageCtn">
-                <el-image style="width: 100px; height: 100px"
-                  :src="item"
+                <el-image :src="item"
+                  style="width:982px"
                   fit="content"></el-image>
               </div>
             </span>
@@ -109,6 +109,8 @@ export default Vue.extend({
       X_position: 0,
       Y_position: 0,
       receiptInfo: {
+        check_user: '',
+        certificate: '',
         user: {
           name: '',
           phone: ''
@@ -145,6 +147,7 @@ export default Vue.extend({
       })
       .then((res) => {
         this.receiptInfo = res.data.data
+        this.receiptInfo.check_user = this.receiptInfo.check_user || ''
         Object.prototype.toString.call(this.receiptInfo.reviewer) === '[object Object]'
           ? this.receiptInfo.reviewer
           : (this.receiptInfo.reviewer = { name: '' })

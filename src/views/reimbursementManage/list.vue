@@ -230,7 +230,7 @@ export default Vue.extend({
         query.end_time || this.$GetDateStr(0)
       ]
       this.limit = Number(query.limit) || 10
-      this.group = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
+      // this.group = Number(query.group_id) || Number(this.$getLocalStorage('group_id')) || ''
     },
     reset() {
       this.$confirm('是否重置所有筛选条件?', '提示', {
