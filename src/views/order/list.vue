@@ -805,7 +805,7 @@ export default Vue.extend({
     exportExcel() {
       this.mainLoading = true
       this.exportExcelParam.start_time = this.exportExcelParam.date.length > 0 ? this.exportExcelParam.date[0] : ''
-      this.exportExcelParam.end_time = this.exportExcelParam.date.length > 0 ? this.exportExcelParam.date[0] : ''
+      this.exportExcelParam.end_time = this.exportExcelParam.date.length > 0 ? this.exportExcelParam.date[1] : ''
       exportExcel.orderInfo(this.exportExcelParam).then((res: any) => {
         if (res.data.status) {
           this.mainLoading = false

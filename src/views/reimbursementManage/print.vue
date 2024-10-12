@@ -25,16 +25,9 @@
             </div>
           </div>
         </div>
-        <div class="fr">
-          <!-- <div class="remark">打开微信扫一扫 更新每日生产进度</div> -->
-          <div class="pImage">
-            <img :src="receiptInfo.url"
-              width="100%"
-              alt="" />
-          </div>
-        </div>
       </div>
-      <div class="pbody">
+      <div class="pbody"
+        style="min-height:1380px">
         <div class="tableCtn pageOne">
           <div class="module">
             <div class="tbody hasTop"
@@ -70,18 +63,338 @@
                   style="flex: 1.5">{{ receiptInfo.amount }} 元</div>
               </div>
             </div>
-            <span v-if="receiptInfo.certificate">
-              <div v-for="(item, index) in receiptInfo.certificate.split(',')"
-                :key="item + index"
-                class="elImageCtn">
-                <el-image :src="item"
-                  style="width:982px"
-                  fit="content"></el-image>
-              </div>
-            </span>
           </div>
         </div>
+        <template v-if="showOrderImage==='1'">
+          <div class="tableCtn">
+            <div class="tbody hasTop">
+              <div class="trow"
+                v-if="receiptInfo.image_data.length>3">
+                <div class="tcol imageFather">
+                  <span style="
+                  position: absolute;
+                  right: 15px;
+                  top: 0;
+                  bottom: 0;
+                  float: right;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  z-index: 1;
+                  background: #ccc;"
+                    class="hoverBlue"
+                    @click="receiptInfo.imageIndex1 = receiptInfo.imageIndex1===receiptInfo.image_data.length-1?0:receiptInfo.imageIndex1+1">下一张</span>
+                  <span style="
+                  position: absolute;
+                  left: 15px;
+                  top: 0;
+                  bottom: 0;
+                  float: right;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  z-index: 1;
+                  background: #ccc;"
+                    class="hoverBlue"
+                    @click="receiptInfo.imageIndex1 = receiptInfo.imageIndex1===0?receiptInfo.image_data.length-1:receiptInfo.imageIndex1-1">上一张</span>
+                  <el-image style="width:100%;height:100%"
+                    :src="receiptInfo.image_data.length>0?receiptInfo.image_data[receiptInfo.imageIndex1]:''">
+                    <div slot="error"
+                      class="image-slot">
+                      <i class="el-icon-picture-outline"
+                        style="font-size:42px"></i>
+                    </div>
+                  </el-image>
+                </div>
+                <div class="tcol imageFather">
+                  <span style="
+                  position: absolute;
+                  right: 15px;
+                  top: 0;
+                  bottom: 0;
+                  float: right;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  z-index: 1;
+                  background: #ccc;"
+                    class="hoverBlue"
+                    @click="receiptInfo.imageIndex2 = receiptInfo.imageIndex2===receiptInfo.image_data.length-1?0:receiptInfo.imageIndex2+1">下一张</span>
+                  <span style="
+                  position: absolute;
+                  left: 15px;
+                  top: 0;
+                  bottom: 0;
+                  float: right;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  z-index: 1;
+                  background: #ccc;"
+                    class="hoverBlue"
+                    @click="receiptInfo.imageIndex2 = receiptInfo.imageIndex2===0?receiptInfo.image_data.length-1:receiptInfo.imageIndex2-1">上一张</span>
+                  <el-image style="width:100%;height:100%"
+                    :src="receiptInfo.image_data.length>0?receiptInfo.image_data[receiptInfo.imageIndex2]:''">
+                    <div slot="error"
+                      class="image-slot">
+                      <i class="el-icon-picture-outline"
+                        style="font-size:42px"></i>
+                    </div>
+                  </el-image>
+                </div>
+                <div class="tcol imageFather">
+                  <span style="
+                  position: absolute;
+                  right: 15px;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  z-index: 1;
+                  background: #ccc;"
+                    class="hoverBlue"
+                    @click="receiptInfo.imageIndex3 = receiptInfo.imageIndex3===receiptInfo.image_data.length-1?0:receiptInfo.imageIndex3+1">下一张</span>
+                  <span style="
+                  position: absolute;
+                  left: 15px;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  z-index: 1;
+                  background: #ccc;"
+                    class="hoverBlue"
+                    @click="receiptInfo.imageIndex3 = receiptInfo.imageIndex3===0?receiptInfo.image_data.length-1:receiptInfo.imageIndex3-1">上一张</span>
+                  <el-image style="width:100%;height:100%"
+                    :src="receiptInfo.image_data.length>0?receiptInfo.image_data[receiptInfo.imageIndex3]:''">
+                    <div slot="error"
+                      class="image-slot">
+                      <i class="el-icon-picture-outline"
+                        style="font-size:42px"></i>
+                    </div>
+                  </el-image>
+                </div>
+              </div>
+              <div class="trow"
+                v-else>
+                <div class="tcol imageFather"
+                  v-for="indexImage in 3"
+                  :key="indexImage">
+                  <el-image style="width:100%;height:100%"
+                    :src="receiptInfo.image_data[indexImage-1]">
+                    <div slot="error"
+                      class="image-slot">
+                      <i class="el-icon-picture-outline"
+                        style="font-size:42px"></i>
+                    </div>
+                  </el-image>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
+      <template v-if="showOrderImage==='2'">
+        <div style="page-break-before: always;page-break-after:always;width: 982px;min-height:1500px"
+          v-for="itemPic,indexPic in receiptInfo.image_data"
+          :key="indexPic">
+          <div class="imageFather"
+            style="display:block;text-align:center">
+            <div style="position:relative;display:inline-block;margin:auto">
+              <img style="max-height:1490px;max-width:982px;"
+                :src="itemPic" />
+              <span class="hoverBlue"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(receiptInfo,indexPic)">隐藏图片</span>
+            </div>
+
+          </div>
+        </div>
+      </template>
+      <template v-if="showOrderImage==='3'">
+        <div style="page-break-before: always;page-break-after:always;width: 982px;height:1500px;display:flex;flex-direction:column">
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="receiptInfo.image_data[index-1]"
+                style="max-width:100%"
+                v-if="receiptInfo.image_data[index-1]" />
+              <span class="hoverBlue"
+                v-if="receiptInfo.image_data[index-1]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(receiptInfo,index)">隐藏图片</span>
+            </div>
+          </div>
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="receiptInfo.image_data[index+2]"
+                style="max-width:100%"
+                v-if="receiptInfo.image_data[index+2]" />
+              <span class="hoverBlue"
+                v-if="receiptInfo.image_data[index+2]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(receiptInfo,index+2)">隐藏图片</span>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template v-if="showOrderImage==='4'">
+        <div style="page-break-before: always;page-break-after:always;width: 982px;height:1500px;display:flex;flex-direction:column">
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="receiptInfo.image_data[index-1]"
+                style="max-width:100%"
+                v-if="receiptInfo.image_data[index-1]" />
+              <span class="hoverBlue"
+                v-if="receiptInfo.image_data[index-1]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(receiptInfo,index)">隐藏图片</span>
+            </div>
+          </div>
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="receiptInfo.image_data[index+2]"
+                style="max-width:100%"
+                v-if="receiptInfo.image_data[index+2]" />
+              <span class="hoverBlue"
+                v-if="receiptInfo.image_data[index+2]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(receiptInfo,index+2)">隐藏图片</span>
+            </div>
+          </div>
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="receiptInfo.image_data[index+5]"
+                style="max-width:100%"
+                v-if="receiptInfo.image_data[index+5]" />
+              <span class="hoverBlue"
+                v-if="receiptInfo.image_data[index+5]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(receiptInfo,index+5)">隐藏图片</span>
+            </div>
+          </div>
+          <div style="flex:1;display:flex">
+            <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative"
+              v-for="index in 3"
+              :key="index"
+              class="imageFather">
+              <img :src="receiptInfo.image_data[index+8]"
+                style="max-width:100%"
+                v-if="receiptInfo.image_data[index+8]" />
+              <span class="hoverBlue"
+                v-if="receiptInfo.image_data[index+8]"
+                style=" 
+                  position: absolute;
+                  left: 0;
+                  right:0;
+                  top: 0;
+                  bottom: 0;
+                  margin: auto;
+                  cursor: pointer;
+                  line-height: 32px;
+                  height: 32px;
+                  width:4em;
+                  z-index: 1;
+                  background: #ccc;"
+                @click="deleteImage(receiptInfo,index+8)">隐藏图片</span>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
     <div class="setting_sign_style"
       v-if="showMenu"
@@ -91,6 +404,14 @@
         @click="windowMethod(1)">刷新</div>
       <div class="setting_item"
         @click="windowMethod(2)">打印</div>
+      <div class="setting_item"
+        @click="showOrderImage='1'">图片不单独打印-任选3图</div>
+      <div class="setting_item"
+        @click="showOrderImage='2'">图片单独打印-1图</div>
+      <div class="setting_item"
+        @click="showOrderImage='3'">图片单独打印-6图</div>
+      <div class="setting_item"
+        @click="showOrderImage='4'">图片单独打印-12图</div>
     </div>
   </div>
 </template>
@@ -108,7 +429,9 @@ export default Vue.extend({
       showMenu: false,
       X_position: 0,
       Y_position: 0,
+      showOrderImage: this.$getLocalStorage('showOrderImage') || '1',
       receiptInfo: {
+        image_data: [],
         check_user: '',
         certificate: '',
         user: {
@@ -148,6 +471,7 @@ export default Vue.extend({
       .then((res) => {
         this.receiptInfo = res.data.data
         this.receiptInfo.check_user = this.receiptInfo.check_user || ''
+        this.receiptInfo.image_data = this.receiptInfo.certificate ? this.receiptInfo.certificate.split(',') : []
         Object.prototype.toString.call(this.receiptInfo.reviewer) === '[object Object]'
           ? this.receiptInfo.reviewer
           : (this.receiptInfo.reviewer = { name: '' })

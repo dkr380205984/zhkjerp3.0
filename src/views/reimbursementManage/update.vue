@@ -232,9 +232,14 @@ export default Vue.extend({
         .then((res) => {
           let data = res.data.data
           if (res.data.data.certificate) {
-            this.cv_list = res.data.data.certificate.split(',')
+            this.file_list = res.data.data.certificate.split(',').map((url: any) => {
+              return { url }
+            })
+
+            // this.cv_list = res.data.data.certificate.split(',')
             this.cvImageLength = res.data.data.certificate.split(',').length + 1
           } else {
+            this.file_list = []
             this.cv_list = []
             this.cvImageLength = 1
           }
@@ -270,9 +275,9 @@ export default Vue.extend({
           string += item + ','
         }
       })
-      this.file_list.forEach((item: string | null) => {
+      this.file_list.forEach((item: any) => {
         if (item) {
-          string += item + ','
+          string += item.url + ','
         }
       })
       string = string.substring(0, string.length - 1)
@@ -337,11 +342,10 @@ export default Vue.extend({
       }
     },
     successFile(response: { hash: string; key: string }, index: number) {
-      this.file_list.push('https://file.zwyknit.com/' + response.key)
-      this.cvImageLength = Number(this.cvImageLength) + 1
+      this.file_list.push({ url: 'https://file.zwyknit.com/' + response.key })
     },
-    removeFile(file: { response: { hash: string; key: string } }, index: number) {
-      this.$deleteItem(this.file_list, this.file_list.indexOf('https://file.zwyknit.com/' + file.response.key))
+    removeFile(file: any, index: number) {
+      this.$deleteItem(this.file_list, this.file_list.map((item: any) => item.url).indexOf(file.url))
     },
 
     dataURLtoFile(dataurl: string, filename: string) {
